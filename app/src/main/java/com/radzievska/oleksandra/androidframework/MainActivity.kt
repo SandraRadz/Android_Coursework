@@ -64,35 +64,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     }
 
-    private fun runLocalModel(mediaImage: Image, rotation: Int){
-
-        val localModel = FirebaseAutoMLLocalModel.Builder()
-            .setAssetFilePath("birds/manifest.json")
-            .build()
-
-        val options = FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel)
-            .setConfidenceThreshold(0.5f)  // Evaluate your model in the Firebase console
-            // to determine an appropriate value.
-            .build()
-        val labeler = FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(options)
-
-        val image = FirebaseVisionImage.fromMediaImage(mediaImage, rotation)
-
-        labeler.processImage(image)
-            .addOnSuccessListener { labels ->
-                for (label in labels) {
-                    val text = label.text
-                    val confidence = label.confidence
-                    Log.d("LABELS!!!!!!!!!!!!", "$text $confidence")
-
-                    Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(applicationContext, "Error:(", Toast.LENGTH_SHORT).show()
-            }
-    }
-
     // todo finish later
     private fun runRemoteModel(){
         // Firebase
@@ -114,7 +85,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(640, 480))
+            setTargetResolution(Size(840, 840))
         }.build()
 
 
@@ -144,7 +115,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         // Build the image analysis use case and instantiate our analyzer
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, LuminosityAnalyzer())
+            setAnalyzer(executor, LuminosityAnalyzer(this@MainActivity))
         }
 
         // Bind use cases to lifecycle
