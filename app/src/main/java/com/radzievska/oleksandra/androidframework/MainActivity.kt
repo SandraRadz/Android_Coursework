@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Matrix
+import android.media.Image
+import android.util.Log
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
@@ -18,6 +20,13 @@ import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions
+import com.google.firebase.ml.common.modeldownload.FirebaseModelManager
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
+import com.google.firebase.ml.vision.automl.FirebaseAutoMLRemoteModel
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import java.util.concurrent.Executors
 
 // This is an arbitrary number we are using to keep track of the permission
@@ -51,6 +60,50 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
         }
+
+
+    }
+
+    private fun runLocalModel(mediaImage: Image, rotation: Int){
+
+        val localModel = FirebaseAutoMLLocalModel.Builder()
+            .setAssetFilePath("birds/manifest.json")
+            .build()
+
+        val options = FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel)
+            .setConfidenceThreshold(0.5f)  // Evaluate your model in the Firebase console
+            // to determine an appropriate value.
+            .build()
+        val labeler = FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(options)
+
+        val image = FirebaseVisionImage.fromMediaImage(mediaImage, rotation)
+
+        labeler.processImage(image)
+            .addOnSuccessListener { labels ->
+                for (label in labels) {
+                    val text = label.text
+                    val confidence = label.confidence
+                    Log.d("LABELS!!!!!!!!!!!!", "$text $confidence")
+
+                    Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(applicationContext, "Error:(", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // todo finish later
+    private fun runRemoteModel(){
+        // Firebase
+        val remoteModel = FirebaseAutoMLRemoteModel.Builder("Birds_2020311231646").build()
+        val conditions = FirebaseModelDownloadConditions.Builder()
+            .requireWifi()
+            .build()
+        FirebaseModelManager.getInstance().download(remoteModel, conditions)
+            .addOnCompleteListener {
+                // Success.
+            }
 
     }
 
