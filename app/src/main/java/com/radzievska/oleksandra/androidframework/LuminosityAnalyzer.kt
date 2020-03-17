@@ -6,8 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions
+import com.google.firebase.ml.common.modeldownload.FirebaseModelManager
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
+import com.google.firebase.ml.vision.automl.FirebaseAutoMLRemoteModel
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
@@ -94,6 +97,19 @@ class LuminosityAnalyzer(private val context: Context) : ImageAnalysis.Analyzer 
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, "Error:(", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // todo finish later
+    private fun runRemoteModel(){
+        // Firebase
+        val remoteModel = FirebaseAutoMLRemoteModel.Builder("Birds_2020311231646").build()
+        val conditions = FirebaseModelDownloadConditions.Builder()
+            .requireWifi()
+            .build()
+        FirebaseModelManager.getInstance().download(remoteModel, conditions)
+            .addOnCompleteListener {
+                // Success.
             }
     }
 }
