@@ -2,10 +2,10 @@ package com.radzievska.oleksandra.androidframework;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
@@ -30,13 +30,13 @@ public class ARActivity extends AppCompatActivity {
     private static final String TAG = ARActivity.class.getSimpleName();
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
+    private int resource = R.raw.fox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
-
     }
 
 
@@ -79,20 +79,7 @@ public class ARActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ModelRenderable.builder()
-                // To load as an asset from the 'assets' folder ('src/main/assets/andy.sfb'):
-                .setSource(this, R.raw.andy) //.setSource(this, R.raw.andy)
-
-                // Instead, load as a resource from the 'res/raw' folder ('src/main/res/raw/andy.sfb'):
-                //.setSource(this, R.raw.andy)
-
-                .build()
-                .thenAccept(renderable -> andyRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Log.e(TAG, "Unable to load Renderable.", throwable);
-                            return null;
-                        });
+        renderModel(resource);
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -113,6 +100,23 @@ public class ARActivity extends AppCompatActivity {
                 });
     }
 
+    private void renderModel(int resource){
+        ModelRenderable.builder()
+                // To load as an asset from the 'assets' folder ('src/main/assets/andy.sfb'):
+                .setSource(this, resource) //.setSource(this, R.raw.andy)
+
+                // Instead, load as a resource from the 'res/raw' folder ('src/main/res/raw/andy.sfb'):
+                //.setSource(this, R.raw.andy)
+
+                .build()
+                .thenAccept(renderable -> andyRenderable = renderable)
+                .exceptionally(
+                        throwable -> {
+                            Log.e(TAG, "Unable to load Renderable.", throwable);
+                            return null;
+                        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
@@ -124,5 +128,19 @@ public class ARActivity extends AppCompatActivity {
             }
             finish();
         }
+    }
+
+    public void changeModelResource(int resource){
+        this.resource = resource;
+    }
+
+    public void changeToAndroid(View view) {
+        changeModelResource(R.raw.andy);
+        renderModel(resource);
+    }
+
+    public void changeToFox(View view) {
+        changeModelResource(R.raw.fox);
+        renderModel(resource);
     }
 }
