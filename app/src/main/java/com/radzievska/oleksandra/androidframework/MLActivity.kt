@@ -1,7 +1,6 @@
 package com.radzievska.oleksandra.androidframework
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,8 +10,6 @@ import android.view.TextureView
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.camera.core.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import java.util.concurrent.Executors
 
 class MLActivity : AppCompatActivity() {
@@ -31,14 +28,22 @@ class MLActivity : AppCompatActivity() {
 
         viewFinder = findViewById(R.id.view_finder)
 
-        // Request camera permissions
-        if (allPermissionsGranted()) {
-            viewFinder.post { startCamera() }
-        } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, MLActivity.REQUEST_CODE_PERMISSIONS
-            )
+        // ARCore requires camera permission to operate.
+        if (!CameraPermissionHelper.hasCameraPermission(this)) {
+            CameraPermissionHelper.requestCameraPermission(this)
+            return
         }
+
+        viewFinder.post { startCamera() }
+
+        // Request camera permissions
+//        if (allPermissionsGranted()) {
+//            viewFinder.post { startCamera() }
+//        } else {
+//            ActivityCompat.requestPermissions(
+//                this, REQUIRED_PERMISSIONS, MLActivity.REQUEST_CODE_PERMISSIONS
+//            )
+//        }
 
         // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -123,24 +128,31 @@ class MLActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == MLActivity.REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                viewFinder.post { startCamera() }
-            } else {
+            if (!CameraPermissionHelper.hasCameraPermission(this)) {
                 Toast.makeText(this,
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT).show()
                 finish()
             }
+            viewFinder.post { startCamera() }
+//            if (allPermissionsGranted()) {
+//                viewFinder.post { startCamera() }
+//            } else {
+//                Toast.makeText(this,
+//                    "Permissions not granted by the user.",
+//                    Toast.LENGTH_SHORT).show()
+//                finish()
+//            }
         }
     }
 
     /**
      * Check if all permission specified in the manifest have been granted
      */
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
+//    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+//        ContextCompat.checkSelfPermission(
+//            baseContext, it) == PackageManager.PERMISSION_GRANTED
+//    }
 
 
 }

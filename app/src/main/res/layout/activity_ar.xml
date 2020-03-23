@@ -14,21 +14,15 @@ tools:context=".ARActivity">
         android:id="@+id/android_model"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:height="40dp"
-        android:width="40dp"
         android:text="Android"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginTop="16dp"
         android:onClick="changeToAndroid"/>
     <Button
         android:id="@+id/fox_model"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:height="40dp"
-        android:width="40dp"
         android:text="Fox"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/android_model"
         android:onClick="changeToFox"/>
 
 </RelativeLayout>

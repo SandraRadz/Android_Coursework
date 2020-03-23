@@ -30,7 +30,7 @@ public class ARActivity extends AppCompatActivity {
     private static final String TAG = ARActivity.class.getSimpleName();
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
-    private int resource = R.raw.fox;
+    private int resource = R.raw.andy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

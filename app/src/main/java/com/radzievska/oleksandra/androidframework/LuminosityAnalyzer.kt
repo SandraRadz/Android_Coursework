@@ -87,8 +87,9 @@ class LuminosityAnalyzer(private val context: Context) : ImageAnalysis.Analyzer 
             .addOnSuccessListener { labels ->
                 for (label in labels) {
                     val confidence = label.confidence
-                        val text = label.text
-                        Log.d("LABELS!!!!!!!!!!!!", "$text $confidence")
+                    val text = label.text
+                    val entityId = label.entityId
+                    Log.d("LABELS!!!!!!!!!!!!", "$text $confidence")
                     // todo print text + add button to activity with AR
                    // if(confidence > 0.7) {
                    //     Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
