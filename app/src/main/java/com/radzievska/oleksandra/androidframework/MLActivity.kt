@@ -77,6 +77,7 @@ class MLActivity : AppCompatActivity() {
             updateTransform()
         }
 
+        // CameraX.bindToLifecycle(this, preview)
 
         // Setup image analysis pipeline that computes average pixel luminance
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
@@ -95,10 +96,9 @@ class MLActivity : AppCompatActivity() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-//        CameraX.bindToLifecycle(this, preview)
+//
 
-        CameraX.bindToLifecycle(
-            this, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
     private fun updateTransform() {
         val matrix = Matrix()
@@ -135,24 +135,8 @@ class MLActivity : AppCompatActivity() {
                 finish()
             }
             viewFinder.post { startCamera() }
-//            if (allPermissionsGranted()) {
-//                viewFinder.post { startCamera() }
-//            } else {
-//                Toast.makeText(this,
-//                    "Permissions not granted by the user.",
-//                    Toast.LENGTH_SHORT).show()
-//                finish()
-//            }
         }
     }
-
-    /**
-     * Check if all permission specified in the manifest have been granted
-     */
-//    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-//        ContextCompat.checkSelfPermission(
-//            baseContext, it) == PackageManager.PERMISSION_GRANTED
-//    }
 
 
 }
