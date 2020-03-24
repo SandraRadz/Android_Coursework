@@ -14,10 +14,12 @@ import com.google.firebase.ml.vision.automl.FirebaseAutoMLRemoteModel
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
-class LuminosityAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
+class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
 
     private fun degreesToFirebaseRotation(degrees: Int): Int = when(degrees) {
@@ -40,34 +42,55 @@ class LuminosityAnalyzer(private val context: Context) : ImageAnalysis.Analyzer 
     }
 
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
-//        val currentTimestamp = System.currentTimeMillis()
-//        // Calculate the average luma no more often than every second
-//        if (currentTimestamp - lastAnalyzedTimestamp >=
-//            TimeUnit.SECONDS.toMillis(1)) {
-//            // Since format in ImageAnalysis is YUV, image.planes[0]
-//            // contains the Y (luminance) plane
-//            val buffer = image.planes[0].buffer
-//            // Extract image data from callback object
-//            val data = buffer.toByteArray()
-//            // Convert the data into an array of pixel values
-//            val pixels = data.map { it.toInt() and 0xFF }
-//            // Compute average luminance for the image
-//            val luma = pixels.average()
-//            // Log the new luma value
-//            Log.d("CameraXApp", "Average luminosity: $luma")
-//            // Update timestamp of last analyzed frame
-//            lastAnalyzedTimestamp = currentTimestamp
-//        }
-        val mediaImage = imageProxy?.image
-        val imageRotation = degreesToFirebaseRotation(degrees)
-        if (mediaImage != null) {
-            runLocalModel(mediaImage, imageRotation)
-           // val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
-            // Pass image to an ML Kit Vision API
-            // ...
+        val currentTimestamp = System.currentTimeMillis()
+        if (currentTimestamp - lastAnalyzedTimestamp >=
+            TimeUnit.SECONDS.toMillis(1)) {
+                val mediaImage = imageProxy?.image
+                val imageRotation = degreesToFirebaseRotation(degrees)
+                if (mediaImage != null) {
+                    trackObject(mediaImage, imageRotation)
+
+                    // val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
+                    // Pass image to an ML Kit Vision API
+                    // ...
+
+                }
+            lastAnalyzedTimestamp = currentTimestamp
         }
     }
 
+    private fun trackObject(mediaImage: Image, rotation: Int){
+        // Live detection and tracking
+        val options = FirebaseVisionObjectDetectorOptions.Builder()
+            .setDetectorMode(FirebaseVisionObjectDetectorOptions.STREAM_MODE)
+            .enableClassification()  // Optional
+            .build()
+
+        val objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
+        //val objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
+
+        val image = FirebaseVisionImage.fromMediaImage(mediaImage, rotation)
+
+
+        objectDetector.processImage(image)
+            .addOnSuccessListener { detectedObjects ->
+                Log.d("SUCCESS!!!!!!!!!!!!", "!!!!!!!!!!!!")
+                for (obj in detectedObjects) {
+                    val id = obj.trackingId       // A number that identifies the object across images
+                    val bounds = obj.boundingBox  // The object's position in the image
+
+                    // If classification was enabled:
+                    val category = obj.classificationCategory
+                    val confidence = obj.classificationConfidence
+                    Log.d("!!!!!!!!!!!!!!!!!!", ""+category)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.d("FAILED!!!!!!!!!!!!", "!!!!!!!!!!!!")
+            }
+
+
+    }
 
     private fun runLocalModel(mediaImage: Image, rotation: Int){
 

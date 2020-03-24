@@ -88,7 +88,7 @@ class MLActivity : AppCompatActivity() {
 
         // Build the image analysis use case and instantiate our analyzer
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, LuminosityAnalyzer(this@MLActivity))
+            setAnalyzer(executor, MyAnalyzer(this@MLActivity))
         }
 
         // Bind use cases to lifecycle
