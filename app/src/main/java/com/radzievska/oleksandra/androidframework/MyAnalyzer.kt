@@ -1,6 +1,7 @@
 package com.radzievska.oleksandra.androidframework
 
 import android.content.Context
+import android.graphics.*
 import android.media.Image
 import android.util.Log
 import android.widget.Toast
@@ -15,6 +16,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
+import kotlinx.android.synthetic.main.activity_detect_object.*
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
@@ -41,6 +44,29 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         return data // Return the byte array
     }
 
+    fun Image.toBitmap(): Bitmap {
+        val yBuffer = planes[0].buffer // Y
+        val uBuffer = planes[1].buffer // U
+        val vBuffer = planes[2].buffer // V
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        //U and V are swapped
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, this.width, this.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
         val currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
@@ -48,7 +74,8 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 val mediaImage = imageProxy?.image
                 val imageRotation = degreesToFirebaseRotation(degrees)
                 if (mediaImage != null) {
-                    trackObject(mediaImage, imageRotation)
+                    //trackObject(mediaImage, imageRotation)
+                    runObjectDetection(mediaImage.toBitmap())
 
                     // val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
                     // Pass image to an ML Kit Vision API
@@ -57,6 +84,39 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 }
             lastAnalyzedTimestamp = currentTimestamp
         }
+    }
+
+    private fun runObjectDetection(bitmap: Bitmap) {
+        // Step 1: create MLKit's VisionImage object
+        val image = FirebaseVisionImage.fromBitmap(bitmap)
+
+        // Step 2: acquire detector object
+        val options = FirebaseVisionObjectDetectorOptions.Builder()
+            .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
+            .enableMultipleObjects()
+            .enableClassification()
+            .build()
+        val detector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
+
+        // Step 3: feed given image to detector and setup callback
+        detector.processImage(image)
+            .addOnSuccessListener {
+                // Task completed successfully
+                // Post-detection processing : draw result
+                Log.d("###############################", it.toString())
+//                val drawingView = DrawingView(context, it)
+//                drawingView.draw(Canvas(bitmap))
+//                runOnUiThread {
+//                    imageView.setImageBitmap(bitmap)
+//                }
+            }
+            .addOnFailureListener {
+                // Task failed with an exception
+                Toast.makeText(
+                    context, "Oops, something went wrong!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
     private fun trackObject(mediaImage: Image, rotation: Int){
@@ -75,17 +135,22 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         objectDetector.processImage(image)
             .addOnSuccessListener { detectedObjects ->
                 Log.d("SUCCESS!!!!!!!!!!!!", "!!!!!!!!!!!!")
-                for (obj in detectedObjects) {
-                    val id = obj.trackingId       // A number that identifies the object across images
-                    val bounds = obj.boundingBox  // The object's position in the image
-
-                    // If classification was enabled:
-                    val category = obj.classificationCategory
-                    val confidence = obj.classificationConfidence
-                    Log.d("!!!!!!!!!!!!!!!!!!", ""+category)
-                }
+                Log.d("###############################", detectedObjects.toString())
+//                for (obj in detectedObjects) {
+//                    val id = obj.trackingId       // A number that identifies the object across images
+//                    val bounds = obj.boundingBox  // The object's position in the image
+//
+//                    // If classification was enabled:
+//                    val category = obj.classificationCategory
+//                    val confidence = obj.classificationConfidence
+//                    Log.d("!!!!!!!!!!!!!!!!!!", ""+category)
+//                }
             }
             .addOnFailureListener { e ->
+                Toast.makeText(
+                    context, "Oops, something went wrong!",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.d("FAILED!!!!!!!!!!!!", "!!!!!!!!!!!!")
             }
 
