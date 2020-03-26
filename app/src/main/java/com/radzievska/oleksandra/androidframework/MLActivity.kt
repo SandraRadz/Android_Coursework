@@ -1,6 +1,7 @@
 package com.radzievska.oleksandra.androidframework
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,25 +9,23 @@ import android.util.Size
 import android.view.Surface
 import android.view.TextureView
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
 import java.util.concurrent.Executors
 
 class MLActivity : AppCompatActivity() {
 
-    private companion object{
-        private const val REQUEST_CODE_PERMISSIONS = 10
-    }
-
-    // This is an array of all the permission specified in the manifest.
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-
+    lateinit var overlay: Bitmap
     private lateinit var viewFinder: TextureView
+    lateinit var imageView: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ml)
 
         viewFinder = findViewById(R.id.view_finder)
+        imageView = findViewById(R.id.imageView)
 
         // ARCore requires camera permission to operate.
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
@@ -34,16 +33,9 @@ class MLActivity : AppCompatActivity() {
             return
         }
 
+
         viewFinder.post { startCamera() }
 
-        // Request camera permissions
-//        if (allPermissionsGranted()) {
-//            viewFinder.post { startCamera() }
-//        } else {
-//            ActivityCompat.requestPermissions(
-//                this, REQUIRED_PERMISSIONS, MLActivity.REQUEST_CODE_PERMISSIONS
-//            )
-//        }
 
         // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -89,14 +81,9 @@ class MLActivity : AppCompatActivity() {
 
         // Build the image analysis use case and instantiate our analyzer
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, MyAnalyzer(this@MLActivity))
-        }
+            setAnalyzer(executor, MyAnalyzer(this@MLActivity, imageView))
 
-        // Bind use cases to lifecycle
-        // If Android Studio complains about "this" being not a LifecycleOwner
-        // try rebuilding the project or updating the appcompat dependency to
-        // version 1.1.0 or higher.
-//
+        }
 
         CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
@@ -127,15 +114,14 @@ class MLActivity : AppCompatActivity() {
      */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == MLActivity.REQUEST_CODE_PERMISSIONS) {
-            if (!CameraPermissionHelper.hasCameraPermission(this)) {
-                Toast.makeText(this,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            viewFinder.post { startCamera() }
+        if (!CameraPermissionHelper.hasCameraPermission(this)) {
+            Toast.makeText(this,
+                "Permissions not granted by the user.",
+                Toast.LENGTH_SHORT).show()
+            finish()
         }
+        viewFinder.post { startCamera() }
+
     }
 
 

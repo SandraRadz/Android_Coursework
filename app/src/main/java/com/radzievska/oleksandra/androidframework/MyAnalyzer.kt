@@ -4,26 +4,25 @@ import android.content.Context
 import android.graphics.*
 import android.media.Image
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions
-import com.google.firebase.ml.common.modeldownload.FirebaseModelManager
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
-import com.google.firebase.ml.vision.automl.FirebaseAutoMLRemoteModel
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
-import kotlinx.android.synthetic.main.activity_detect_object.*
+import org.jetbrains.anko.runOnUiThread
 import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
-class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
+class MyAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
+    lateinit var overlay: Bitmap
+
+
 
     private fun degreesToFirebaseRotation(degrees: Int): Int = when(degrees) {
         0 -> FirebaseVisionImageMetadata.ROTATION_0
@@ -31,17 +30,6 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         180 -> FirebaseVisionImageMetadata.ROTATION_180
         270 -> FirebaseVisionImageMetadata.ROTATION_270
         else -> throw Exception("Rotation must be 0, 90, 180, or 270.")
-    }
-
-    /**
-     * Helper extension function used to extract a byte array from an
-     * image plane buffer
-     */
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()    // Rewind the buffer to zero
-        val data = ByteArray(remaining())
-        get(data)   // Copy the buffer into a byte array
-        return data // Return the byte array
     }
 
     fun Image.toBitmap(): Bitmap {
@@ -104,11 +92,14 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 // Task completed successfully
                 // Post-detection processing : draw result
                 Log.d("###############################", it.toString())
-//                val drawingView = DrawingView(context, it)
-//                drawingView.draw(Canvas(bitmap))
-//                runOnUiThread {
-//                    imageView.setImageBitmap(bitmap)
-//                }
+
+                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+                val drawingView = DrawingView(context, it)
+
+                drawingView.draw(Canvas(overlay))
+                context.runOnUiThread {
+                    imageView.setImageBitmap(overlay)
+                }
             }
             .addOnFailureListener {
                 // Task failed with an exception
@@ -119,43 +110,6 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             }
     }
 
-    private fun trackObject(mediaImage: Image, rotation: Int){
-        // Live detection and tracking
-        val options = FirebaseVisionObjectDetectorOptions.Builder()
-            .setDetectorMode(FirebaseVisionObjectDetectorOptions.STREAM_MODE)
-            .enableClassification()  // Optional
-            .build()
-
-        val objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
-        //val objectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
-
-        val image = FirebaseVisionImage.fromMediaImage(mediaImage, rotation)
-
-
-        objectDetector.processImage(image)
-            .addOnSuccessListener { detectedObjects ->
-                Log.d("SUCCESS!!!!!!!!!!!!", "!!!!!!!!!!!!")
-                Log.d("###############################", detectedObjects.toString())
-//                for (obj in detectedObjects) {
-//                    val id = obj.trackingId       // A number that identifies the object across images
-//                    val bounds = obj.boundingBox  // The object's position in the image
-//
-//                    // If classification was enabled:
-//                    val category = obj.classificationCategory
-//                    val confidence = obj.classificationConfidence
-//                    Log.d("!!!!!!!!!!!!!!!!!!", ""+category)
-//                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    context, "Oops, something went wrong!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.d("FAILED!!!!!!!!!!!!", "!!!!!!!!!!!!")
-            }
-
-
-    }
 
     private fun runLocalModel(mediaImage: Image, rotation: Int){
 
@@ -189,16 +143,4 @@ class MyAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             }
     }
 
-    // todo finish later
-    private fun runRemoteModel(){
-        // Firebase
-        val remoteModel = FirebaseAutoMLRemoteModel.Builder("Birds_2020311231646").build()
-        val conditions = FirebaseModelDownloadConditions.Builder()
-            .requireWifi()
-            .build()
-        FirebaseModelManager.getInstance().download(remoteModel, conditions)
-            .addOnCompleteListener {
-                // Success.
-            }
-    }
 }

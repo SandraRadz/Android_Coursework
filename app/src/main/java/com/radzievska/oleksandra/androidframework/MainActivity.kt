@@ -25,9 +25,5 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         startActivity(intent)
     }
 
-    fun openDetectObjectActivity(view: View) {
-        intent = Intent(this, DetectObjectActivity::class.java)
-        startActivity(intent)
-    }
 
 }

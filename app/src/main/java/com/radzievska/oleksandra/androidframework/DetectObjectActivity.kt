@@ -97,7 +97,6 @@ class DetectObjectActivity: AppCompatActivity(),
             .addOnSuccessListener {
                 // Task completed successfully
                 // Post-detection processing : draw result
-
                 val drawingView = DrawingView(applicationContext, it)
                 drawingView.draw(Canvas(bitmap))
                 runOnUiThread {
@@ -155,4 +154,3 @@ class DetectObjectActivity: AppCompatActivity(),
         }
     }
 }
-
