@@ -1,6 +1,5 @@
 package com.radzievska.oleksandra.androidframework
 
-import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.*
+import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper
 import java.util.concurrent.Executors
 
 class MLActivity : AppCompatActivity() {
@@ -50,7 +50,7 @@ class MLActivity : AppCompatActivity() {
 
         // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(840, 840))
+            setTargetResolution(Size(1040, 1040))
         }.build()
 
 

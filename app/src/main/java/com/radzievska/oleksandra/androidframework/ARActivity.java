@@ -22,6 +22,7 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper;
 
 public class ARActivity extends AppCompatActivity {
 

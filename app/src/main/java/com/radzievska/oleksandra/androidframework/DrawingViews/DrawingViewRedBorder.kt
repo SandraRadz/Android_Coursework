@@ -1,4 +1,4 @@
-package com.radzievska.oleksandra.androidframework
+package com.radzievska.oleksandra.androidframework.DrawingViews
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,14 +8,9 @@ import android.graphics.Rect
 import android.view.View
 import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 
-/**
- * DrawingView class:
- *    onDraw() function implements drawing
- *     - boundingBox
- *     - Category
- *     - Confidence ( if Category is not CATEGORY_UNKNOWN )
- */
-class DrawingView(context: Context, var visionObjects: List<FirebaseVisionObject>) : View(context) {
+
+
+class DrawingViewRedBorder(context: Context, var visionObjects: List<FirebaseVisionObject>) : View(context) {
 
     companion object {
         // mapping table for category to strings: drawing strings

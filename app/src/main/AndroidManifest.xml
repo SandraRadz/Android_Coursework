@@ -30,7 +30,6 @@
         </activity>
         <activity android:name=".MLActivity" />
         <activity android:name=".ARActivity" />
-        <activity android:name=".DetectObjectActivity" />
     </application>
 
 </manifest>

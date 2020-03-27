@@ -10,10 +10,15 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
+import com.radzievska.oleksandra.androidframework.DrawingViews.DrawingViewLabels
+import com.radzievska.oleksandra.androidframework.DrawingViews.DrawingViewRedBorder
+import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
 import org.jetbrains.anko.runOnUiThread
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
@@ -21,6 +26,9 @@ import java.util.concurrent.TimeUnit
 class MyAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
     lateinit var overlay: Bitmap
+    // todo label to rendering
+    // todo model
+    // todo qr/model/ar
 
 
 
@@ -58,16 +66,13 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
         val currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
-            TimeUnit.SECONDS.toMillis(1)) {
+            TimeUnit.SECONDS.toMillis(3)) {
                 val mediaImage = imageProxy?.image
-                val imageRotation = degreesToFirebaseRotation(degrees)
+                // val imageRotation = degreesToFirebaseRotation(degrees)
                 if (mediaImage != null) {
                     //trackObject(mediaImage, imageRotation)
-                    runObjectDetection(mediaImage.toBitmap())
-
-                    // val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
-                    // Pass image to an ML Kit Vision API
-                    // ...
+                    //runObjectDetection(mediaImage.toBitmap())
+                    runQRDetection(mediaImage.toBitmap())
 
                 }
             lastAnalyzedTimestamp = currentTimestamp
@@ -75,39 +80,91 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
     }
 
     private fun runObjectDetection(bitmap: Bitmap) {
-        // Step 1: create MLKit's VisionImage object
         val image = FirebaseVisionImage.fromBitmap(bitmap)
 
-        // Step 2: acquire detector object
         val options = FirebaseVisionObjectDetectorOptions.Builder()
             .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
-            .enableMultipleObjects()
             .enableClassification()
             .build()
         val detector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
 
-        // Step 3: feed given image to detector and setup callback
+
         detector.processImage(image)
             .addOnSuccessListener {
-                // Task completed successfully
-                // Post-detection processing : draw result
-                Log.d("###############################", it.toString())
+                Log.d("DETECTED OBJECTS", it.toString())
 
                 overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-                val drawingView = DrawingView(context, it)
 
+                val drawingView = DrawingViewRedBorder(context, it)
                 drawingView.draw(Canvas(overlay))
+
                 context.runOnUiThread {
                     imageView.setImageBitmap(overlay)
                 }
             }
             .addOnFailureListener {
-                // Task failed with an exception
                 Toast.makeText(
                     context, "Oops, something went wrong!",
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    private fun runQRDetection(bitmap: Bitmap){
+        val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+            .setBarcodeFormats(
+                FirebaseVisionBarcode.FORMAT_QR_CODE,
+                FirebaseVisionBarcode.FORMAT_AZTEC)
+            .build()
+
+        val image = FirebaseVisionImage.fromBitmap(bitmap)
+        val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
+        val result = detector.detectInImage(image)
+            .addOnSuccessListener { barcodes ->
+                Log.d("DETECTED OBJECTS", barcodes.toString())
+
+                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+
+                val drawingView = QRDrawingView(context, barcodes)
+                drawingView.draw(Canvas(overlay))
+
+                context.runOnUiThread {
+                    imageView.setImageBitmap(overlay)
+                }
+
+
+//                for (barcode in barcodes) {
+//
+//                    val bounds = barcode.boundingBox
+//                    Log.d("BOUNDS", barcode.boundingBox.toString())
+//                    val corners = barcode.cornerPoints
+//
+//                    val rawValue = barcode.rawValue
+//
+//                    val valueType = barcode.valueType
+//                    // See API reference for complete list of supported types
+//                    when (valueType) {
+//                        FirebaseVisionBarcode.TYPE_WIFI -> {
+//                            val ssid = barcode.wifi!!.ssid
+//                            val password = barcode.wifi!!.password
+//                            val type = barcode.wifi!!.encryptionType
+//                        }
+//                        FirebaseVisionBarcode.TYPE_URL -> {
+//                            val title = barcode.url!!.title
+//                            val url = barcode.url!!.url
+//                        }
+//                    }
+//                }
+
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    context, "Oops, something went wrong!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+
     }
 
 
@@ -142,5 +199,4 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
                 Toast.makeText(context, "Error:(", Toast.LENGTH_SHORT).show()
             }
     }
-
 }
