@@ -1,6 +1,5 @@
 package com.radzievska.oleksandra.androidframework
 
-import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,9 +15,9 @@ import java.util.concurrent.Executors
 
 class MLActivity : AppCompatActivity() {
 
-    lateinit var overlay: Bitmap
     private lateinit var viewFinder: TextureView
     lateinit var imageView: ImageView
+    private val objectDetection: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,10 +79,16 @@ class MLActivity : AppCompatActivity() {
         }.build()
 
         // Build the image analysis use case and instantiate our analyzer
-        val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, MyAnalyzer(this@MLActivity, imageView))
-
+        val analyzerUseCase = if (objectDetection) {
+            ImageAnalysis(analyzerConfig).apply {
+                setAnalyzer(executor, ObjectAnalyzer(this@MLActivity, imageView))
+            }
+        } else{
+            ImageAnalysis(analyzerConfig).apply {
+                setAnalyzer(executor, QRAnalyzer(this@MLActivity, imageView))
+            }
         }
+
 
         CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }

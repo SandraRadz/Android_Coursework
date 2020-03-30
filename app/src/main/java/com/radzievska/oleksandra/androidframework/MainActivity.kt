@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     fun openARActivity(view: View) {
-        intent = Intent(this, ARActivity::class.java)
+        intent = Intent(this, ARActivity()::class.java)
         startActivity(intent)
     }
 
