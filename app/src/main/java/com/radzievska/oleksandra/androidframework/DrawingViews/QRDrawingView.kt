@@ -7,11 +7,12 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 
 
 class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarcode>) : View(context) {
 
-    val MAX_FONT_SIZE = 96F
+    val MAX_FONT_SIZE = 48F
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -19,19 +20,19 @@ class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarc
         pen.textAlign = Paint.Align.LEFT
 
         for (item in visionObjects) {
-            // draw bounding box
-            pen.color = Color.RED
+            pen.color = Color.WHITE
             pen.strokeWidth = 8F
-            pen.style = Paint.Style.STROKE
+            pen.style = Paint.Style.FILL_AND_STROKE
             val box = item.boundingBox
             if (box != null) {
-                canvas.drawRect(box, pen)
+                canvas.drawRect(box.left.toFloat(), box.top.toFloat(), box.right+50F, box.top+120F, pen)
             }
 
             // Draw result category, and confidence
             val tags: MutableList<String> = mutableListOf()
             tags.add("${item.rawValue}")
-           
+            tags.add("QR")
+
 
             var tagSize = Rect(0, 0, 0, 0)
             var maxLen = 0
@@ -45,9 +46,8 @@ class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarc
             }
 
             // calculate the right font size
-            pen.style = Paint.Style.FILL_AND_STROKE
-            pen.color = Color.YELLOW
-            pen.strokeWidth = 2F
+            pen.style = Paint.Style.FILL
+            pen.color = Color.BLACK
 
             pen.textSize = MAX_FONT_SIZE
             pen.getTextBounds(tags[index], 0, tags[index].length, tagSize)

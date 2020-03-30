@@ -16,8 +16,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
-import com.radzievska.oleksandra.androidframework.DrawingViews.DrawingViewLabels
-import com.radzievska.oleksandra.androidframework.DrawingViews.DrawingViewRedBorder
+import com.radzievska.oleksandra.androidframework.DrawingViews.LabelDrawingView
 import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
 import org.jetbrains.anko.runOnUiThread
 import java.io.ByteArrayOutputStream
@@ -66,7 +65,7 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
         val currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
-            TimeUnit.SECONDS.toMillis(3)) {
+            TimeUnit.SECONDS.toMillis(1)) {
                 val mediaImage = imageProxy?.image
                 // val imageRotation = degreesToFirebaseRotation(degrees)
                 if (mediaImage != null) {
@@ -95,7 +94,7 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
 
                 overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
 
-                val drawingView = DrawingViewRedBorder(context, it)
+                val drawingView = LabelDrawingView(context, it)
                 drawingView.draw(Canvas(overlay))
 
                 context.runOnUiThread {
@@ -131,7 +130,6 @@ class MyAnalyzer(private val context: Context, private val imageView: ImageView)
                 context.runOnUiThread {
                     imageView.setImageBitmap(overlay)
                 }
-
 
 //                for (barcode in barcodes) {
 //
