@@ -103,12 +103,7 @@ public class ARActivity extends AppCompatActivity {
 
     private void renderModel(int resource){
         ModelRenderable.builder()
-                // To load as an asset from the 'assets' folder ('src/main/assets/andy.sfb'):
-                .setSource(this, resource) //.setSource(this, R.raw.andy)
-
-                // Instead, load as a resource from the 'res/raw' folder ('src/main/res/raw/andy.sfb'):
-                //.setSource(this, R.raw.andy)
-
+                .setSource(this, resource)
                 .build()
                 .thenAccept(renderable -> andyRenderable = renderable)
                 .exceptionally(

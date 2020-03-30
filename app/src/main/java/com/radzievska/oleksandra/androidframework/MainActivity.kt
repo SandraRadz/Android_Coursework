@@ -24,5 +24,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         startActivity(intent)
     }
 
+    fun openAugmentedImagesActivity(view: View) {
+        intent = Intent(this, AugmentedImagesActivity()::class.java)
+        startActivity(intent)
+    }
+
 
 }

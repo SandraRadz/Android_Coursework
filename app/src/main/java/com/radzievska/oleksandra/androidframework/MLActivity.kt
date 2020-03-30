@@ -18,6 +18,7 @@ class MLActivity : AppCompatActivity() {
     private lateinit var viewFinder: TextureView
     lateinit var imageView: ImageView
     private val objectDetection: Boolean = false
+    private var resource = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +80,14 @@ class MLActivity : AppCompatActivity() {
         }.build()
 
         // Build the image analysis use case and instantiate our analyzer
-        val analyzerUseCase = if (objectDetection) {
-            ImageAnalysis(analyzerConfig).apply {
+        val analyzerUseCase = when {
+            resource != null -> ImageAnalysis(analyzerConfig).apply {
                 setAnalyzer(executor, ObjectAnalyzer(this@MLActivity, imageView))
             }
-        } else{
-            ImageAnalysis(analyzerConfig).apply {
+            objectDetection -> ImageAnalysis(analyzerConfig).apply {
+                setAnalyzer(executor, ObjectAnalyzer(this@MLActivity, imageView))
+            }
+            else -> ImageAnalysis(analyzerConfig).apply {
                 setAnalyzer(executor, QRAnalyzer(this@MLActivity, imageView))
             }
         }
