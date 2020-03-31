@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 
 
 class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarcode>) : View(context) {

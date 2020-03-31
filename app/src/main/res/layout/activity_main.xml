@@ -13,21 +13,21 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Машинне навчання"
+        android:text="@string/ml_button"
         android:onClick="openMLActivity"
         />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Доповнена реальність"
+        android:text="@string/ar_button"
         android:onClick="openARActivity"
         />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Доповнена реальність"
+        android:text="@string/ar2_button"
         android:onClick="openAugmentedImagesActivity"
         />
 

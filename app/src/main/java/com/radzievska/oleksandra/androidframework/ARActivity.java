@@ -31,7 +31,7 @@ public class ARActivity extends AppCompatActivity {
     private static final String TAG = ARActivity.class.getSimpleName();
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
-    private int resource = R.raw.earth_obj;
+    private int resource = R.raw.andy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +130,11 @@ public class ARActivity extends AppCompatActivity {
 
     public void changeToFox(View view) {
         changeModelResource(R.raw.fox);
+        renderModel(resource);
+    }
+
+    public void changeToEarth(View view) {
+        changeModelResource(R.raw.earth_obj);
         renderModel(resource);
     }
 }

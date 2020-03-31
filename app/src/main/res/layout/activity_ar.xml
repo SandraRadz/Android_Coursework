@@ -25,4 +25,12 @@ tools:context=".ARActivity">
         android:layout_below="@id/android_model"
         android:onClick="changeToFox"/>
 
+    <Button
+        android:id="@+id/earth_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/earth_button"
+        android:layout_below="@id/fox_model"
+        android:onClick="changeToEarth"/>
+
 </RelativeLayout>

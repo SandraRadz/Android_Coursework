@@ -3,4 +3,8 @@
     <string name="fit_image_to_scan">Fit image to scan</string>
     <string name="android_button">Android</string>
     <string name="fox_button">Fox</string>
+    <string name="earth_button">Earth</string>
+    <string name="ml_button">Машинне навчання</string>
+    <string name="ar_button">Доповнена реальність</string>
+    <string name="ar2_button">Трекінг + 3D</string>
 </resources>
