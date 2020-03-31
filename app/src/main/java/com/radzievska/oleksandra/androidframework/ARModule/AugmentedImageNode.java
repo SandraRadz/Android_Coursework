@@ -18,7 +18,7 @@ public class AugmentedImageNode extends AnchorNode {
     // The augmented image represented by this node.
     private AugmentedImage image;
     private float maze_scale = 0.0f;
-    private int resource = R.raw.andy;
+    private int resource = R.raw.earth_obj;
 
     private CompletableFuture<ModelRenderable> mazeRenderable;
 
@@ -49,15 +49,16 @@ public class AugmentedImageNode extends AnchorNode {
 
         Node mazeNode = new Node();
 
-//        final float maze_edge_size = 492.65f;
-//        final float max_image_edge = Math.max(image.getExtentX(), image.getExtentZ());
-//        maze_scale = max_image_edge / maze_edge_size;
-//
-//        // Scale Y an extra 10 times to lower the maze wall.
-//        mazeNode.setLocalScale(new Vector3(maze_scale, maze_scale * 0.1f, maze_scale));
 
         mazeNode.setParent(this);
         mazeNode.setRenderable(mazeRenderable.getNow(null));
+
+        final float max_image_edge = Math.max(image.getExtentX(), image.getExtentZ());
+        maze_scale = max_image_edge;
+
+        // Scale Y an extra 10 times to lower the maze wall.
+        mazeNode.setLocalScale(new Vector3(maze_scale, maze_scale, maze_scale));
+
     }
 
     public AugmentedImage getImage() {
