@@ -48,7 +48,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.2'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
-    implementation 'com.google.ar:core:1.15.0'
+    implementation 'com.google.ar:core:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
     implementation 'com.google.ar.sceneform:core:1.15.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -74,3 +76,24 @@ sceneform.asset('sampledata/fox/model.obj',
         'default',
         'sampledata/fox/model.sfa',
         'src/main/res/raw/fox')
+
+
+sceneform.asset('sampledata/models/frame_lower_left.obj',
+        'default',
+        'sampledata/models/frame_lower_left.sfa',
+        'src/main/res/raw/frame_lower_left')
+
+sceneform.asset('sampledata/models/frame_lower_right.obj',
+        'default',
+        'sampledata/models/frame_lower_right.sfa',
+        'src/main/res/raw/frame_lower_right')
+
+sceneform.asset('sampledata/models/frame_upper_left.obj',
+        'default',
+        'sampledata/models/frame_upper_left.sfa',
+        'src/main/res/raw/frame_upper_left')
+
+sceneform.asset('sampledata/models/frame_upper_right.obj',
+        'default',
+        'sampledata/models/frame_upper_right.sfa',
+        'src/main/res/raw/frame_upper_right')
