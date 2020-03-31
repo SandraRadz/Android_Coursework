@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "412376008111",
+    "firebase_url": "https://courseworkandroid.firebaseio.com",
+    "project_id": "courseworkandroid",
+    "storage_bucket": "courseworkandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412376008111:android:3dd5971d9761ff416c9b5a",
+        "android_client_info": {
+          "package_name": "com.radzievska.oleksandra.androidframework"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412376008111-a0sb7s0rag8tu3upe84dte5b2s5shbpt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.radzievska.oleksandra.androidframework",
+            "certificate_hash": "2e57473faa6d5adae301dd64af7f86c177162262"
+          }
+        },
+        {
+          "client_id": "412376008111-lehs4j5dograi4le1mr0s670a5t28v5s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqIERMcpT7q32Vz8QGIdJOVvSRfchnDqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412376008111-lehs4j5dograi4le1mr0s670a5t28v5s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
