@@ -14,7 +14,6 @@ import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 class LabelDrawingView(context: Context, var visionObjects: List<FirebaseVisionObject>) : View(context) {
 
     companion object {
-        // mapping table for category to strings: drawing strings
         val categoryNames: Map<Int, String> = mapOf(
             FirebaseVisionObject.CATEGORY_UNKNOWN to "Unknown",
             FirebaseVisionObject.CATEGORY_HOME_GOOD to "Home Goods",

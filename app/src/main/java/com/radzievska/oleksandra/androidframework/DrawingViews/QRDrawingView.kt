@@ -28,7 +28,6 @@ class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarc
                 canvas.drawRect(box.left.toFloat(), box.top.toFloat(), box.right+50F, box.top+120F, pen)
             }
 
-            // Draw result category, and confidence
             val tags: MutableList<String> = mutableListOf()
             tags.add("${item.rawValue}")
             tags.add("QR")
@@ -45,7 +44,6 @@ class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarc
                 }
             }
 
-            // calculate the right font size
             pen.style = Paint.Style.FILL
             pen.color = Color.BLACK
 
@@ -53,13 +51,11 @@ class QRDrawingView(context: Context, var visionObjects: List<FirebaseVisionBarc
             pen.getTextBounds(tags[index], 0, tags[index].length, tagSize)
             val fontSize: Float = pen.textSize * (box?.width() ?: 500) / tagSize.width()
 
-            // adjust the font size so texts are inside the bounding box
             if (fontSize < pen.textSize) pen.textSize = fontSize
 
             var margin = ((box?.width() ?: 500) - tagSize.width()) / 2.0F
             if (margin < 0F) margin = 0F
 
-            // draw tags onto bitmap (bmp is in upside down format)
             for ((idx, txt) in tags.withIndex()) {
                 if (box != null) {
                     canvas.drawText(

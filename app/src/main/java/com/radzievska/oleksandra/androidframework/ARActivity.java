@@ -45,7 +45,6 @@ public class ARActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // ARCore requires camera permission to operate.
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
             CameraPermissionHelper.requestCameraPermission(this);
             return;
@@ -55,18 +54,14 @@ public class ARActivity extends AppCompatActivity {
             if (mSession == null) {
                 switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
                     case INSTALLED:
-                        // Success, create the AR session.
                         mSession = new Session(this);
                         break;
                     case INSTALL_REQUESTED:
-                        // Ensures next invocation of requestInstall() will either return
-                        // INSTALLED or throw an exception.
                         mUserRequestedInstall = false;
                         return;
                 }
             }
         } catch (UnavailableUserDeclinedInstallationException e) {
-            // Display an appropriate message to the user and return gracefully.
             Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
                     .show();
             return;
@@ -88,12 +83,10 @@ public class ARActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Create the Anchor.
                     Anchor anchor = hitResult.createAnchor();
                     AnchorNode anchorNode = new AnchorNode(anchor);
                     anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-                    // Create the transformable andy and add it to the anchor.
                     TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
                     andy.setParent(anchorNode);
                     andy.setRenderable(andyRenderable);

@@ -19,14 +19,11 @@ import java.util.concurrent.TimeUnit
 class ObjectAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
     lateinit var overlay: Bitmap
-    // todo label to rendering
-    // todo model
-    // todo qr/model/ar
 
     fun Image.toBitmap(): Bitmap {
-        val yBuffer = planes[0].buffer // Y
-        val uBuffer = planes[1].buffer // U
-        val vBuffer = planes[2].buffer // V
+        val yBuffer = planes[0].buffer
+        val uBuffer = planes[1].buffer
+        val vBuffer = planes[2].buffer
 
         val ySize = yBuffer.remaining()
         val uSize = uBuffer.remaining()

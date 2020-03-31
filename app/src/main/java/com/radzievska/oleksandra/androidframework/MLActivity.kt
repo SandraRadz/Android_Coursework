@@ -27,17 +27,12 @@ class MLActivity : AppCompatActivity() {
         viewFinder = findViewById(R.id.view_finder)
         imageView = findViewById(R.id.imageView)
 
-        // ARCore requires camera permission to operate.
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
             CameraPermissionHelper.requestCameraPermission(this)
             return
         }
 
-
         viewFinder.post { startCamera() }
-
-
-        // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
         }
@@ -48,19 +43,15 @@ class MLActivity : AppCompatActivity() {
 
     private fun startCamera() {
 
-        // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().apply {
             setTargetResolution(Size(1040, 1040))
         }.build()
 
-
-        // Build the viewfinder use case
         val preview = Preview(previewConfig)
 
-        // Every time the viewfinder is updated, recompute layout
+
         preview.setOnPreviewOutputUpdateListener {
 
-            // To update the SurfaceTexture, we have to remove it and re-add it
             val parent = viewFinder.parent as ViewGroup
             parent.removeView(viewFinder)
             parent.addView(viewFinder, 0)
@@ -69,12 +60,7 @@ class MLActivity : AppCompatActivity() {
             updateTransform()
         }
 
-        // CameraX.bindToLifecycle(this, preview)
-
-        // Setup image analysis pipeline that computes average pixel luminance
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
-            // In our analysis, we care more about the latest image than
-            // analyzing *every* image
             setImageReaderMode(
                 ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
         }.build()
@@ -112,14 +98,9 @@ class MLActivity : AppCompatActivity() {
         }
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
 
-        // Finally, apply transformations to our TextureView
         viewFinder.setTransform(matrix)
     }
 
-    /**
-     * Process result from permission request dialog box, has the request
-     * been granted? If yes, start Camera. Otherwise display a toast
-     */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
@@ -129,8 +110,6 @@ class MLActivity : AppCompatActivity() {
             finish()
         }
         viewFinder.post { startCamera() }
-
     }
-
 
 }
