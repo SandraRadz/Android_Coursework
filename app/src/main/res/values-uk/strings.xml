@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Андроїд курсова</string>
+    <string name="fit_image_to_scan">Наведіть на зображення</string>
+    <string name="android_button">Андроїд</string>
+    <string name="fox_button">Лисиця</string>
+    <string name="earth_button">Земля</string>
+    <string name="ml_button">Машинне навчання</string>
+    <string name="ar_button">Доповнена реальність</string>
+    <string name="ar2_button">Трекінг + 3D</string>
+</resources>
