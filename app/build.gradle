@@ -97,3 +97,8 @@ sceneform.asset('sampledata/models/frame_upper_right.obj',
         'default',
         'sampledata/models/frame_upper_right.sfa',
         'src/main/res/raw/frame_upper_right')
+
+sceneform.asset('sampledata/earth/earth_obj.obj',
+        'default',
+        'sampledata/earth/earth_obj.sfa',
+        'src/main/res/raw/earth_obj')
