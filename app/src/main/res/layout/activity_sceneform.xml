@@ -10,21 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <RelativeLayout
-            android:id="@+id/sceneform_relative_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="9"
-            app:layout_constraintBottom_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
             <fragment
                 android:name="com.radzievska.oleksandra.androidframework.SceneformArFragment"
                 android:id="@+id/sceneform_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     tools:context=".AugmentedImagesActivity">
 
 
-    <fragment android:name="com.radzievska.oleksandra.androidframework.EarthARModule.AugmentedImageFragment"
+    <fragment android:name="com.radzievska.oleksandra.androidframework.old.EarthARModule.AugmentedImageFragment"
         android:id="@+id/ux_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

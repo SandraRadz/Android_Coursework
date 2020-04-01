@@ -1,6 +1,5 @@
-package com.radzievska.oleksandra.androidframework.Analyzers
+package com.radzievska.oleksandra.androidframework.old.Analyzers
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.*
 import android.media.Image
@@ -12,17 +11,10 @@ import androidx.camera.core.ImageProxy
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
-import com.radzievska.oleksandra.androidframework.DrawingViews.LabelDrawingView
-import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
 import com.radzievska.oleksandra.androidframework.R
-import org.jetbrains.anko.runOnUiThread
-import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
 class MyAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
