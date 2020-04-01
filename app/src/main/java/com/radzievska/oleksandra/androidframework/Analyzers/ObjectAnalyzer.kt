@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 
 class ObjectAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
+    private var currentTimestamp = 0L
     lateinit var overlay: Bitmap
 
     fun Image.toBitmap(): Bitmap {
@@ -44,7 +45,7 @@ class ObjectAnalyzer(private val context: Context, private val imageView: ImageV
     }
 
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
-        val currentTimestamp = System.currentTimeMillis()
+        currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
             TimeUnit.SECONDS.toMillis(1)) {
             val mediaImage = imageProxy?.image

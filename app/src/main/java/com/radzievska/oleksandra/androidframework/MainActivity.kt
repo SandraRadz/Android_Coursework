@@ -29,5 +29,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         startActivity(intent)
     }
 
+    fun openSceneformActivity(view: View) {
+        intent = Intent(this, SceneformActivity()::class.java)
+        startActivity(intent)
+    }
+
 
 }

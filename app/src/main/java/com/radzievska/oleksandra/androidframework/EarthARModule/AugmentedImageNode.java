@@ -1,4 +1,4 @@
-package com.radzievska.oleksandra.androidframework.ARModule;
+package com.radzievska.oleksandra.androidframework.EarthARModule;
 
 import android.content.Context;
 import android.util.Log;

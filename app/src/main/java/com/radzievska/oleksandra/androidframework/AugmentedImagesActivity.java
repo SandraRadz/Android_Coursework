@@ -11,7 +11,8 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.radzievska.oleksandra.androidframework.ARModule.AugmentedImageNode;
+import com.radzievska.oleksandra.androidframework.EarthARModule.AugmentedImageNode;
+import com.radzievska.oleksandra.androidframework.R;
 import com.radzievska.oleksandra.androidframework.Tools.SnackbarHelper;
 
 import java.util.Collection;

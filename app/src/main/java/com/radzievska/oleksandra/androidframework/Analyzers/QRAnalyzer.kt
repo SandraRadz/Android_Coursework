@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 
 class QRAnalyzer(private val context: Context, private val imageView: ImageView) : ImageAnalysis.Analyzer {
     private var lastAnalyzedTimestamp = 0L
+    private var currentTimestamp = 0L
     lateinit var overlay: Bitmap
 
 
@@ -46,7 +47,7 @@ class QRAnalyzer(private val context: Context, private val imageView: ImageView)
     }
 
     override fun analyze(imageProxy: ImageProxy, degrees: Int) {
-        val currentTimestamp = System.currentTimeMillis()
+        currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
             TimeUnit.SECONDS.toMillis(1)) {
             val mediaImage = imageProxy?.image
