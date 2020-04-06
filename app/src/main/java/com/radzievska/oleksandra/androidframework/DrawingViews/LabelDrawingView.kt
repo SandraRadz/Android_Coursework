@@ -1,4 +1,4 @@
-package com.radzievska.oleksandra.androidframework.old.DrawingViews
+package com.radzievska.oleksandra.androidframework.DrawingViews
 
 import android.content.Context
 import android.graphics.Canvas

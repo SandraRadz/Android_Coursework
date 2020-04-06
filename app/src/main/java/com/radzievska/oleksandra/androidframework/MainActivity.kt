@@ -14,11 +14,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(R.layout.activity_main)
     }
 
-    fun openMLActivity(view: View) {
-        intent = Intent(this, MLActivity::class.java)
-        startActivity(intent)
-    }
-
     fun openARActivity(view: View) {
         intent = Intent(this, ARActivity()::class.java)
         startActivity(intent)

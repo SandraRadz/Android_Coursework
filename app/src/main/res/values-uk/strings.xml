@@ -9,4 +9,5 @@
     <string name="ar_button">Доповнена реальність</string>
     <string name="ar2_button">Трекінг + 3D</string>
     <string name="sceneform_button">ML + AR</string>
+    <string name="image_view">Лейба</string>
 </resources>

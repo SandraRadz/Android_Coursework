@@ -8,4 +8,5 @@
     <string name="ar_button">Augmented Reality</string>
     <string name="ar2_button">Augmented Images</string>
     <string name="sceneform_button">ML + AR</string>
+    <string name="image_view">Image View</string>
 </resources>

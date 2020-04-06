@@ -2,15 +2,22 @@ package com.radzievska.oleksandra.androidframework.Analyzers
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
+import com.radzievska.oleksandra.androidframework.old.EarthARModule.AugmentedImageNode
+import org.jetbrains.anko.runOnUiThread
 
-class QRSceneformAnalyzer(private val context: Context, private val image_object: Int?): Analyzer{
+class QRSceneformAnalyzer(private val context: Context, private val arFragment: Fragment, private val imageView: ImageView, private val image_object: Int?): Analyzer{
 
     val TAG = "QRSceneformAnalyzer"
+    lateinit var overlay: Bitmap
 
     override fun runDetection(bitmap: Bitmap) {
         val options = FirebaseVisionBarcodeDetectorOptions.Builder()
@@ -25,8 +32,16 @@ class QRSceneformAnalyzer(private val context: Context, private val image_object
             .addOnSuccessListener { barcodes ->
                 Log.d("DETECTED QR", barcodes.toString())
 
-                for (barcode in barcodes){
-                    Log.d(TAG, barcode.rawValue)
+//                val node = AugmentedImageNode(context)
+//                node.image = augmentedImage
+//                arFragment.getArSceneView().getScene().addChild(node)
+//                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+
+                val drawingView = QRDrawingView(context, barcodes)
+                drawingView.draw(Canvas(overlay))
+
+                context.runOnUiThread {
+                    imageView.setImageBitmap(overlay)
                 }
             }
             .addOnFailureListener {

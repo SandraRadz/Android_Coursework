@@ -10,19 +10,6 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/ml_button"
-        android:onClick="openMLActivity"
-        />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/ar_button"
-        android:onClick="openARActivity"
-        />
 
     <Button
         android:layout_width="match_parent"

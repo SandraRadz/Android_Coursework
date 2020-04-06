@@ -56,7 +56,6 @@ public class AugmentedImageNode extends AnchorNode {
         final float max_image_edge = Math.max(image.getExtentX(), image.getExtentZ());
         maze_scale = max_image_edge;
 
-        // Scale Y an extra 10 times to lower the maze wall.
         mazeNode.setLocalScale(new Vector3(maze_scale, maze_scale, maze_scale));
 
     }

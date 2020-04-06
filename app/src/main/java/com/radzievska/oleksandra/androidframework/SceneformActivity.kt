@@ -1,5 +1,6 @@
 package com.radzievska.oleksandra.androidframework
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,9 +12,13 @@ import android.view.SurfaceView
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.ux.ArFragment
 import android.media.Image
+import android.widget.ImageView
+import com.google.ar.core.Session
+import com.google.ar.sceneform.rendering.ViewRenderable
 import com.radzievska.oleksandra.androidframework.Analyzers.Analyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.ObjectSceneformAnalyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.QRSceneformAnalyzer
+import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper
 import java.util.concurrent.TimeUnit
 
 
@@ -22,26 +27,40 @@ class SceneformActivity : AppCompatActivity() {
     private val TAG = "SceneformActivity"
 
 
-    private lateinit var arFragment: ArFragment
+    private lateinit var arFragment: SceneformArFragment
     private var targetBitmap: Bitmap? = null
+
 
     private var lastAnalyzedTimestamp = 0L
     private var currentTimestamp = 0L
     private lateinit var detector : Analyzer
-    private var model: String? = null
+    private var model = "qq"
     private var image_object: Int? = null
+    private lateinit var drawable_image_view: ImageView
 
     private var callbackThread = HandlerThread("callback-worker")
     private lateinit var callbackHandler: Handler
+    lateinit var session: Session
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sceneform)
 
+        drawable_image_view = findViewById(R.id.imageView)
 
         arFragment = supportFragmentManager
             .findFragmentById(R.id.sceneform_fragment) as SceneformArFragment
+
+   }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (!CameraPermissionHelper.hasCameraPermission(this)) {
+            CameraPermissionHelper.requestCameraPermission(this)
+            return
+        }
 
         arFragment.arSceneView.scene.addOnUpdateListener(this::onUpdateFrame)
 
@@ -49,12 +68,12 @@ class SceneformActivity : AppCompatActivity() {
         callbackHandler = Handler(callbackThread.looper)
 
         detector = if(model != null){
-            ObjectSceneformAnalyzer(this@SceneformActivity, image_object, model)
+            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, image_object, model)
         } else{
-            QRSceneformAnalyzer(this@SceneformActivity, image_object)
+            QRSceneformAnalyzer(this@SceneformActivity, arFragment, drawable_image_view, image_object)
         }
-
     }
+
 
     /**
      * Registered with the Sceneform Scene object, this method is called at the start of each frame.
@@ -91,6 +110,12 @@ class SceneformActivity : AppCompatActivity() {
                 Log.e(TAG, "Failed to copy ArFragment view.")
             }
         }, callbackHandler)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        var intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onStop() {
