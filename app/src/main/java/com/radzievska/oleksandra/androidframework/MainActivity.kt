@@ -14,16 +14,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(R.layout.activity_main)
     }
 
-    fun openARActivity(view: View) {
-        intent = Intent(this, ARActivity()::class.java)
-        startActivity(intent)
-    }
-
-    fun openAugmentedImagesActivity(view: View) {
-        intent = Intent(this, AugmentedImagesActivity()::class.java)
-        startActivity(intent)
-    }
-
     fun openSceneformActivity(view: View) {
         intent = Intent(this, SceneformActivity()::class.java)
         startActivity(intent)

@@ -35,19 +35,18 @@ class SceneformActivity : AppCompatActivity() {
     private var currentTimestamp = 0L
     private lateinit var detector : Analyzer
     private var model = "qq"
-    private var image_object: Int? = null
-    private lateinit var drawable_image_view: ImageView
+    private var resource: Int = R.raw.andy
+    // private lateinit var drawable_image_view: ImageView
 
     private var callbackThread = HandlerThread("callback-worker")
     private lateinit var callbackHandler: Handler
-    lateinit var session: Session
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sceneform)
 
-        drawable_image_view = findViewById(R.id.imageView)
+        // drawable_image_view = findViewById(R.id.imageView)
 
         arFragment = supportFragmentManager
             .findFragmentById(R.id.sceneform_fragment) as SceneformArFragment
@@ -68,9 +67,9 @@ class SceneformActivity : AppCompatActivity() {
         callbackHandler = Handler(callbackThread.looper)
 
         detector = if(model != null){
-            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, image_object, model)
+            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, resource, model)
         } else{
-            QRSceneformAnalyzer(this@SceneformActivity, arFragment, drawable_image_view, image_object)
+            QRSceneformAnalyzer(this@SceneformActivity, arFragment, resource)
         }
     }
 

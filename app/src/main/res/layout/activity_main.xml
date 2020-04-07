@@ -14,13 +14,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="@string/ar2_button"
-        android:onClick="openAugmentedImagesActivity"
-        />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
         android:text="@string/sceneform_button"
         android:onClick="openSceneformActivity"
         />

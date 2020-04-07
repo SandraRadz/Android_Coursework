@@ -16,12 +16,25 @@ import com.google.ar.core.Pose
 import com.google.ar.core.Session
 import com.google.ar.sceneform.ArSceneView
 import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
+import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 
-
-class ObjectSceneformAnalyzer(private val context: Context, private val arFragment: ArFragment, private val image_object: Int?, private val model: String?) : Analyzer{
+// todo delete previous object, add trecable
+class ObjectSceneformAnalyzer(private val context: Context, private val arFragment: ArFragment, private val resource: Int?, private val model: String?) : Analyzer{
 
     val TAG = "ObjectScenefonmAnalyzer"
     lateinit var overlay: Bitmap
+    var session :Session? = null
+
+    var draw: RenderableLabel
+
+    init {
+        draw = if (resource != null ){
+            Renderable3DLabel(context, resource)
+        } else{
+            RenderableTextLabel(context)
+        }
+        //draw = RenderableTextLabel(context)
+    }
 
     override fun runDetection(bitmap: Bitmap) {
         val image = FirebaseVisionImage.fromBitmap(bitmap)
@@ -37,29 +50,17 @@ class ObjectSceneformAnalyzer(private val context: Context, private val arFragme
             .addOnSuccessListener {
                 Log.d("DETECTED OBJECTS", it.toString())
 
-                var draw = Renderable3DLabel(context)
+                if (it.size>0){
+                    session = arFragment.arSceneView.session
+                    val item = it[0]
+                    val pos = arFragment.arSceneView.arFrame?.camera?.pose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
+                    draw.setTextToLabel(item.classificationCategory.toString())
+                    val anchor = session?.createAnchor(pos)
 
-                val pos = floatArrayOf(0f, 0f, -1f)
-                val rotation = floatArrayOf(0f, 0f, 0f, 1f)
-
-                val mCameraRelativePose = Pose.makeTranslation(0.0f, 0.0f, -0.5f)
-
-                var session = arFragment.arSceneView.session
-
-                val anchor = session?.createAnchor(Pose(pos, rotation))
-
-                if (anchor != null) {
-                    draw.setLabel(arFragment, anchor)
+                    if (anchor != null) {
+                        draw.setLabel(arFragment, anchor)
+                    }
                 }
-//
-//                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-//
-//                val drawingView = LabelDrawingView(context, it)
-//                drawingView.draw(Canvas(overlay))
-//
-//                context.runOnUiThread {
-//                    imageView.setImageBitmap(overlay)
-//                }
             }
             .addOnFailureListener {
                 Log.d(TAG, "ERROR!!!!!!!!!!!!!!!!!")

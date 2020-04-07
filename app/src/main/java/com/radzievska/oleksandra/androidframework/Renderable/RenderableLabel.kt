@@ -1,12 +1,14 @@
 package com.radzievska.oleksandra.androidframework.Renderable
 
 import com.google.ar.core.Anchor
+import com.google.ar.sceneform.AnchorNode
+import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.ux.ArFragment
+import com.google.ar.sceneform.ux.TransformableNode
 
 interface  RenderableLabel{
 
-    fun setLabel(arFragment: ArFragment, anchor: Anchor)
-
-
+      fun setLabel(arFragment: ArFragment, anchor: Anchor)
+      fun setTextToLabel(text: String)
 
 }

@@ -11,13 +11,15 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
-import com.radzievska.oleksandra.androidframework.old.EarthARModule.AugmentedImageNode
+import com.radzievska.oleksandra.androidframework.R
 import org.jetbrains.anko.runOnUiThread
 
-class QRSceneformAnalyzer(private val context: Context, private val arFragment: Fragment, private val imageView: ImageView, private val image_object: Int?): Analyzer{
+class QRSceneformAnalyzer(private val context: Context, private val arFragment: Fragment, private val image_object: Int?): Analyzer{
 
     val TAG = "QRSceneformAnalyzer"
     lateinit var overlay: Bitmap
+
+    // private var drawable_image_view = context.findViewById(R.id.imageView)
 
     override fun runDetection(bitmap: Bitmap) {
         val options = FirebaseVisionBarcodeDetectorOptions.Builder()
@@ -40,9 +42,9 @@ class QRSceneformAnalyzer(private val context: Context, private val arFragment: 
                 val drawingView = QRDrawingView(context, barcodes)
                 drawingView.draw(Canvas(overlay))
 
-                context.runOnUiThread {
-                    imageView.setImageBitmap(overlay)
-                }
+//                context.runOnUiThread {
+//                    imageView.setImageBitmap(overlay)
+//                }
             }
             .addOnFailureListener {
                 Log.d(TAG, "ERROR!!!!!!!!!!!!!!!!!")
