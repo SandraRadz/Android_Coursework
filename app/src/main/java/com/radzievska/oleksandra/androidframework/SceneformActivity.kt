@@ -36,7 +36,7 @@ class SceneformActivity : AppCompatActivity() {
     private lateinit var detector : Analyzer
     private var model = "qq"
     private var resource: Int = R.raw.andy
-    // private lateinit var drawable_image_view: ImageView
+    //private var resource: Int? = null
 
     private var callbackThread = HandlerThread("callback-worker")
     private lateinit var callbackHandler: Handler

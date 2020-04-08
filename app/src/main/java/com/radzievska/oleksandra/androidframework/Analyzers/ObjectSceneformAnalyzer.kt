@@ -2,24 +2,32 @@ package com.radzievska.oleksandra.androidframework.Analyzers
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.util.Log
-import android.widget.ImageView
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
-import com.radzievska.oleksandra.androidframework.DrawingViews.LabelDrawingView
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
-import org.jetbrains.anko.runOnUiThread
 import com.google.ar.core.Pose
 import com.google.ar.core.Session
-import com.google.ar.sceneform.ArSceneView
+import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 
-// todo delete previous object, add trecable
-class ObjectSceneformAnalyzer(private val context: Context, private val arFragment: ArFragment, private val resource: Int?, private val model: String?) : Analyzer{
+
+
+class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, resource: Int?, private val model: String?) : Analyzer{
+
+    companion object {
+        val categoryNames: Map<Int, String> = mapOf(
+            FirebaseVisionObject.CATEGORY_UNKNOWN to "Unknown",
+            FirebaseVisionObject.CATEGORY_HOME_GOOD to "Home Goods",
+            FirebaseVisionObject.CATEGORY_FASHION_GOOD to "Fashion Goods",
+            FirebaseVisionObject.CATEGORY_FOOD to "Food",
+            FirebaseVisionObject.CATEGORY_PLACE to "Place",
+            FirebaseVisionObject.CATEGORY_PLANT to "Plant"
+        )
+    }
 
     val TAG = "ObjectScenefonmAnalyzer"
     lateinit var overlay: Bitmap
@@ -33,7 +41,6 @@ class ObjectSceneformAnalyzer(private val context: Context, private val arFragme
         } else{
             RenderableTextLabel(context)
         }
-        //draw = RenderableTextLabel(context)
     }
 
     override fun runDetection(bitmap: Bitmap) {
@@ -53,8 +60,8 @@ class ObjectSceneformAnalyzer(private val context: Context, private val arFragme
                 if (it.size>0){
                     session = arFragment.arSceneView.session
                     val item = it[0]
-                    val pos = arFragment.arSceneView.arFrame?.camera?.pose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
-                    draw.setTextToLabel(item.classificationCategory.toString())
+                    val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
+                    categoryNames[item.classificationCategory]?.let { it1 -> draw.setTextToLabel(it1) }
                     val anchor = session?.createAnchor(pos)
 
                     if (anchor != null) {

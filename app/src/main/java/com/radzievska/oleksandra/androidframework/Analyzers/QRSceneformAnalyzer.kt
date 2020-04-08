@@ -10,7 +10,6 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.radzievska.oleksandra.androidframework.DrawingViews.QRDrawingView
 import com.radzievska.oleksandra.androidframework.R
 import org.jetbrains.anko.runOnUiThread
 
@@ -39,8 +38,8 @@ class QRSceneformAnalyzer(private val context: Context, private val arFragment: 
 //                arFragment.getArSceneView().getScene().addChild(node)
 //                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
 
-                val drawingView = QRDrawingView(context, barcodes)
-                drawingView.draw(Canvas(overlay))
+//                val drawingView = QRDrawingView(context, barcodes)
+//                drawingView.draw(Canvas(overlay))
 
 //                context.runOnUiThread {
 //                    imageView.setImageBitmap(overlay)
