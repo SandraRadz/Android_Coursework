@@ -61,7 +61,13 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
                     session = arFragment.arSceneView.session
                     val item = it[0]
                     val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
-                    categoryNames[item.classificationCategory]?.let { it1 -> draw.setTextToLabel(it1) }
+
+                    if(item.classificationCategory != FirebaseVisionObject.CATEGORY_UNKNOWN){
+                        categoryNames[item.classificationCategory]?.let { it1 -> draw.setTextToLabel("$it1\n${item.classificationConfidence!!.times(100).toInt()}%") }
+                    }
+                    else{
+                        (item.classificationCategory != FirebaseVisionObject.CATEGORY_UNKNOWN)
+                    }
                     val anchor = session?.createAnchor(pos)
 
                     if (anchor != null) {

@@ -6,20 +6,35 @@ import android.graphics.Canvas
 import android.util.Log
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.google.ar.core.Pose
+import com.google.ar.core.Session
+import com.google.ar.sceneform.ux.ArFragment
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.radzievska.oleksandra.androidframework.R
+import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
+import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
+import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 import org.jetbrains.anko.runOnUiThread
 
-class QRSceneformAnalyzer(private val context: Context, private val arFragment: Fragment, private val image_object: Int?): Analyzer{
+class QRSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val resource: Int?): Analyzer{
 
     val TAG = "QRSceneformAnalyzer"
     lateinit var overlay: Bitmap
+    var session : Session? = null
 
-    // private var drawable_image_view = context.findViewById(R.id.imageView)
 
+    var draw: RenderableLabel
+
+    init {
+        draw = if (resource != null ){
+            Renderable3DLabel(context, resource)
+        } else{
+            RenderableTextLabel(context)
+        }
+    }
     override fun runDetection(bitmap: Bitmap) {
         val options = FirebaseVisionBarcodeDetectorOptions.Builder()
             .setBarcodeFormats(
@@ -33,17 +48,18 @@ class QRSceneformAnalyzer(private val context: Context, private val arFragment: 
             .addOnSuccessListener { barcodes ->
                 Log.d("DETECTED QR", barcodes.toString())
 
-//                val node = AugmentedImageNode(context)
-//                node.image = augmentedImage
-//                arFragment.getArSceneView().getScene().addChild(node)
-//                overlay = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+                if (barcodes.size>0){
+                    session = arFragment.arSceneView.session
+                    val item = barcodes[0]
+                    val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(
+                        Pose.makeTranslation(0F, 0F, -0.8f))
+                    item.rawValue?.let { draw.setTextToLabel("$it\nQR") }
+                    val anchor = session?.createAnchor(pos)
 
-//                val drawingView = QRDrawingView(context, barcodes)
-//                drawingView.draw(Canvas(overlay))
-
-//                context.runOnUiThread {
-//                    imageView.setImageBitmap(overlay)
-//                }
+                    if (anchor != null) {
+                        draw.setLabel(arFragment, anchor)
+                    }
+                }
             }
             .addOnFailureListener {
                 Log.d(TAG, "ERROR!!!!!!!!!!!!!!!!!")

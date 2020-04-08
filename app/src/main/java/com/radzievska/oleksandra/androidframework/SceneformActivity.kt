@@ -35,8 +35,8 @@ class SceneformActivity : AppCompatActivity() {
     private var currentTimestamp = 0L
     private lateinit var detector : Analyzer
     private var model = "qq"
-    private var resource: Int = R.raw.andy
-    //private var resource: Int? = null
+    //private var resource: Int = R.raw.andy
+    private var resource: Int? = null
 
     private var callbackThread = HandlerThread("callback-worker")
     private lateinit var callbackHandler: Handler

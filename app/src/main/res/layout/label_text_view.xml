@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:textSize="7sp"
     android:contentDescription="@string/image_view"
-    android:text="Test"
-    android:textAlignment="center"
+    android:text=""
+    android:singleLine="false"
     android:background="@android:color/background_light"
     />
