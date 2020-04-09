@@ -15,6 +15,7 @@ import android.media.Image
 import android.widget.ImageView
 import com.google.ar.core.Session
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
 import com.radzievska.oleksandra.androidframework.Analyzers.Analyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.ObjectSceneformAnalyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.QRSceneformAnalyzer
@@ -28,13 +29,13 @@ class SceneformActivity : AppCompatActivity() {
 
 
     private lateinit var arFragment: SceneformArFragment
-    private var targetBitmap: Bitmap? = null
 
 
     private var lastAnalyzedTimestamp = 0L
     private var currentTimestamp = 0L
     private lateinit var detector : Analyzer
-    private var model = "qq"
+    val localModel = FirebaseAutoMLLocalModel.Builder()
+        .setAssetFilePath("birds/manifest.json").build()
     //private var resource: Int = R.raw.andy
     private var resource: Int? = null
 
@@ -45,8 +46,6 @@ class SceneformActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sceneform)
-
-        // drawable_image_view = findViewById(R.id.imageView)
 
         arFragment = supportFragmentManager
             .findFragmentById(R.id.sceneform_fragment) as SceneformArFragment
@@ -66,8 +65,8 @@ class SceneformActivity : AppCompatActivity() {
         callbackThread.start()
         callbackHandler = Handler(callbackThread.looper)
 
-        detector = if(model != null){
-            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, resource, model)
+        detector = if(localModel != null){
+            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, localModel, resource)
         } else{
             QRSceneformAnalyzer(this@SceneformActivity, arFragment, resource)
         }
@@ -80,7 +79,6 @@ class SceneformActivity : AppCompatActivity() {
      * @param frameTime - time since last frame.
      */
     private fun onUpdateFrame(frameTime: FrameTime) {
-        val frame = arFragment.arSceneView.arFrame ?: return
 
         currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=

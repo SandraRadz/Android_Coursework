@@ -19,26 +19,12 @@ import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 
 
 
-class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, resource: Int?, private val model: String?) : Analyzer{
+class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val model: FirebaseAutoMLLocalModel, resource: Int?) : Analyzer{
 
-    companion object {
-        val categoryNames: Map<Int, String> = mapOf(
-            FirebaseVisionObject.CATEGORY_UNKNOWN to "Unknown",
-            FirebaseVisionObject.CATEGORY_HOME_GOOD to "Home Goods",
-            FirebaseVisionObject.CATEGORY_FASHION_GOOD to "Fashion Goods",
-            FirebaseVisionObject.CATEGORY_FOOD to "Food",
-            FirebaseVisionObject.CATEGORY_PLACE to "Place",
-            FirebaseVisionObject.CATEGORY_PLANT to "Plant"
-        )
-    }
 
     val TAG = "ObjectScenefonmAnalyzer"
-    lateinit var overlay: Bitmap
+    var detectedBitmap: Bitmap? = null
     var session :Session? = null
-
-    val localModel = FirebaseAutoMLLocalModel.Builder()
-        .setAssetFilePath("birds/manifest.json")
-        .build()
 
     var draw: RenderableLabel = if (resource != null ){
         Renderable3DLabel(context, resource)
@@ -46,7 +32,6 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
         RenderableTextLabel(context)
     }
 
-    var detectedBitmap: Bitmap? = null
 
     override fun runDetection(bitmap: Bitmap) {
         val image = FirebaseVisionImage.fromBitmap(bitmap)
@@ -98,7 +83,7 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
     }
 
     private fun classifyFromDetection(detectedBitmap: Bitmap){
-        val options = FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel).build()
+        val options = FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(model).build()
         val labeler = FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(options)
 
         val detectedImage = FirebaseVisionImage.fromBitmap(detectedBitmap)
