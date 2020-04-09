@@ -19,7 +19,7 @@ import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 import org.jetbrains.anko.runOnUiThread
 
-class QRSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val resource: Int?): Analyzer{
+class QRSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val resource: Int?=null): Analyzer{
 
     val TAG = "QRSceneformAnalyzer"
     lateinit var overlay: Bitmap
@@ -57,7 +57,7 @@ class QRSceneformAnalyzer(context: Context, private val arFragment: ArFragment, 
                     val anchor = session?.createAnchor(pos)
 
                     if (anchor != null) {
-                        draw.setLabel(arFragment, anchor)
+                        draw.addLabelToScene(arFragment, anchor)
                     }
                 }
             }

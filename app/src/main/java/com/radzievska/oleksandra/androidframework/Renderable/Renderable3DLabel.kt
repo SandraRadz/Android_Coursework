@@ -25,7 +25,7 @@ class Renderable3DLabel (private val context: Context, private val resource: Int
     var myNode: AnchorNode? = null
 
 
-    override fun setLabel(arFragment: ArFragment, anchor: Anchor) {
+    override fun addLabelToScene(arFragment: ArFragment, anchor: Anchor) {
         ModelRenderable
             .builder()
             .setSource(context, resource)

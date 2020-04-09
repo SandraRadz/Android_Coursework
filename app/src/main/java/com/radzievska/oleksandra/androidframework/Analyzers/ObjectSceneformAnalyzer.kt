@@ -19,7 +19,7 @@ import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 
 
 
-class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val model: FirebaseAutoMLLocalModel, resource: Int?) : Analyzer{
+class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val model: FirebaseAutoMLLocalModel, resource: Int?=null) : Analyzer{
 
 
     val TAG = "ObjectScenefonmAnalyzer"
@@ -67,10 +67,10 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
     }
 
 
-    fun makeBitmapFromObject(firebaseVisionObject: FirebaseVisionObject,
-                             firebaseVisionImage: FirebaseVisionImage,
-                             matrix: Matrix?=null,
-                             filter: Boolean=true): Bitmap{
+    private fun makeBitmapFromObject(firebaseVisionObject: FirebaseVisionObject,
+                                     firebaseVisionImage: FirebaseVisionImage,
+                                     matrix: Matrix?=null,
+                                     filter: Boolean=true): Bitmap{
         return Bitmap.createBitmap(
             firebaseVisionImage.bitmap,
             firebaseVisionObject.boundingBox.left,
@@ -101,7 +101,7 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
                     val anchor = session?.createAnchor(pos)
 
                     if (anchor != null) {
-                        draw.setLabel(arFragment, anchor)
+                        draw.addLabelToScene(arFragment, anchor)
                     }
 
                 }

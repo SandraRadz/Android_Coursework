@@ -33,15 +33,18 @@ class SceneformActivity : AppCompatActivity() {
 
     private var lastAnalyzedTimestamp = 0L
     private var currentTimestamp = 0L
+    private lateinit var arLabeler : ARLabeler
+
     private lateinit var detector : Analyzer
-    val localModel = FirebaseAutoMLLocalModel.Builder()
-        .setAssetFilePath("birds/manifest.json").build()
+
+    val model = "birds/manifest.json"
+
     //private var resource: Int = R.raw.andy
     private var resource: Int? = null
 
-    private var callbackThread = HandlerThread("callback-worker")
-    private lateinit var callbackHandler: Handler
-
+//    private var callbackThread = HandlerThread("callback-worker")
+//    private lateinit var callbackHandler: Handler
+//
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +65,19 @@ class SceneformActivity : AppCompatActivity() {
 
         arFragment.arSceneView.scene.addOnUpdateListener(this::onUpdateFrame)
 
-        callbackThread.start()
-        callbackHandler = Handler(callbackThread.looper)
+//
+//        callbackThread.start()
+//        callbackHandler = Handler(callbackThread.looper)
+//
 
-        detector = if(localModel != null){
-            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, localModel, resource)
-        } else{
-            QRSceneformAnalyzer(this@SceneformActivity, arFragment, resource)
-        }
+
+        arLabeler = ARLabeler(this@SceneformActivity, arFragment, model)
+
+//        detector = if(model != null){
+//            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, model, resource)
+//        } else{
+//            QRSceneformAnalyzer(this@SceneformActivity, arFragment, resource)
+//        }
     }
 
 
@@ -79,14 +87,14 @@ class SceneformActivity : AppCompatActivity() {
      * @param frameTime - time since last frame.
      */
     private fun onUpdateFrame(frameTime: FrameTime) {
+        val frame = arFragment.arSceneView.arFrame ?: return
 
         currentTimestamp = System.currentTimeMillis()
         if (currentTimestamp - lastAnalyzedTimestamp >=
             TimeUnit.SECONDS.toMillis(1)
         ) {
             var t = Thread(Runnable {
-                copyPixelFromView(arFragment.arSceneView)
-
+                arLabeler.runLabeling(arFragment.arSceneView)
                 Log.i(TAG, "View renderable from image view")
             })
             t.start()
@@ -95,19 +103,21 @@ class SceneformActivity : AppCompatActivity() {
         }
     }
 
-    private fun copyPixelFromView(view: SurfaceView){
-        if(view.width<=0 || view.height<=0){
-            return
-        }
-        var bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        PixelCopy.request(view, bitmap, { copyResult ->
-            if (copyResult == PixelCopy.SUCCESS) {
-                detector.runDetection(bitmap)
-            } else {
-                Log.e(TAG, "Failed to copy ArFragment view.")
-            }
-        }, callbackHandler)
-    }
+//    private fun runRendering(view: SurfaceView){
+//        if(view.width<=0 || view.height<=0){
+//            return
+//        }
+//        var bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+//        PixelCopy.request(view, bitmap, { copyResult ->
+//            if (copyResult == PixelCopy.SUCCESS) {
+//                arLabeler.runLabeling()
+//                //detector.runDetection(bitmap)
+//
+//            } else {
+//                Log.e(TAG, "Failed to copy ArFragment view.")
+//            }
+//        }, callbackHandler)
+//    }
 
     override fun onPause() {
         super.onPause()
@@ -117,11 +127,11 @@ class SceneformActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        callbackThread.interrupt()
+      //  callbackThread.interrupt()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        callbackThread.quitSafely()
+       // callbackThread.quitSafely()
     }
 }

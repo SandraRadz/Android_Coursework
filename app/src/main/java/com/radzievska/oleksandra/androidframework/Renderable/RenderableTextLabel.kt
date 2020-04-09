@@ -23,7 +23,7 @@ class RenderableTextLabel (private val context: Context): RenderableLabel {
 
     private var selectedObject: Int = R.layout.label_text_view
 
-    override fun setLabel(arFragment: ArFragment, anchor: Anchor) {
+    override fun addLabelToScene(arFragment: ArFragment, anchor: Anchor) {
         ViewRenderable
             .builder()
             .setView(arFragment.context, selectedObject)

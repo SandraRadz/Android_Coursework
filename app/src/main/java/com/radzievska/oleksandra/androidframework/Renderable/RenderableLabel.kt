@@ -5,7 +5,10 @@ import com.google.ar.sceneform.ux.ArFragment
 
 interface  RenderableLabel{
 
-      fun setLabel(arFragment: ArFragment, anchor: Anchor)
+      fun addLabelToScene(arFragment: ArFragment, anchor: Anchor)
+
       fun setTextToLabel(text: String)
+
+
 
 }
