@@ -2,6 +2,7 @@ package com.radzievska.oleksandra.androidframework.Analyzers
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.firebase.ml.vision.FirebaseVision
@@ -10,6 +11,8 @@ import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 import com.google.ar.core.Pose
 import com.google.ar.core.Session
+import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObject
 import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
@@ -33,15 +36,17 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
     lateinit var overlay: Bitmap
     var session :Session? = null
 
-    var draw: RenderableLabel
+    val localModel = FirebaseAutoMLLocalModel.Builder()
+        .setAssetFilePath("birds/manifest.json")
+        .build()
 
-    init {
-        draw = if (resource != null ){
-            Renderable3DLabel(context, resource)
-        } else{
-            RenderableTextLabel(context)
-        }
+    var draw: RenderableLabel = if (resource != null ){
+        Renderable3DLabel(context, resource)
+    } else{
+        RenderableTextLabel(context)
     }
+
+    var detectedBitmap: Bitmap? = null
 
     override fun runDetection(bitmap: Bitmap) {
         val image = FirebaseVisionImage.fromBitmap(bitmap)
@@ -58,30 +63,69 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
                 Log.d("DETECTED OBJECTS", it.toString())
 
                 if (it.size>0){
-                    session = arFragment.arSceneView.session
                     val item = it[0]
-                    val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
+                    detectedBitmap = makeBitmapFromObject(item,
+                        image,
+                        null,
+                        true)
 
-                    if(item.classificationCategory != FirebaseVisionObject.CATEGORY_UNKNOWN){
-                        categoryNames[item.classificationCategory]?.let { it1 -> draw.setTextToLabel("$it1\n${item.classificationConfidence!!.times(100).toInt()}%") }
-                    }
-                    else{
-                        (item.classificationCategory != FirebaseVisionObject.CATEGORY_UNKNOWN)
-                    }
-                    val anchor = session?.createAnchor(pos)
-
-                    if (anchor != null) {
-                        draw.setLabel(arFragment, anchor)
-                    }
+                    classifyFromDetection(detectedBitmap!!)
                 }
             }
             .addOnFailureListener {
-                Log.d(TAG, "ERROR!!!!!!!!!!!!!!!!!")
+                Log.d(TAG, "ERROR! Detection")
 //                Toast.makeText(
 //                    context, "Oops, something went wrong!",
 //                    Toast.LENGTH_SHORT
 //                ).show()
             }
+    }
+
+
+    fun makeBitmapFromObject(firebaseVisionObject: FirebaseVisionObject,
+                             firebaseVisionImage: FirebaseVisionImage,
+                             matrix: Matrix?=null,
+                             filter: Boolean=true): Bitmap{
+        return Bitmap.createBitmap(
+            firebaseVisionImage.bitmap,
+            firebaseVisionObject.boundingBox.left,
+            firebaseVisionObject.boundingBox.top,
+            firebaseVisionObject.boundingBox.right - firebaseVisionObject.boundingBox.left,
+            firebaseVisionObject.boundingBox.bottom - firebaseVisionObject.boundingBox.top,
+            matrix,
+            filter
+        )
+    }
+
+    private fun classifyFromDetection(detectedBitmap: Bitmap){
+        val options = FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(localModel).build()
+        val labeler = FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(options)
+
+        val detectedImage = FirebaseVisionImage.fromBitmap(detectedBitmap)
+
+        labeler.processImage(detectedImage)
+            .addOnSuccessListener { labels ->
+                if (labels.size>0) {
+                    val label = labels[0]
+                    Log.d("LABELS!!!!!!!!!!!!", labels.toString())
+                    session = arFragment.arSceneView.session
+
+                    val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
+
+                   draw.setTextToLabel("${label.text}\n${label.confidence.times(100).toInt()}%")
+                    val anchor = session?.createAnchor(pos)
+
+                    if (anchor != null) {
+                        draw.setLabel(arFragment, anchor)
+                    }
+
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "ERROR! Classification")
+                //Toast.makeText(context, "Error:(", Toast.LENGTH_SHORT).show()
+            }
+
     }
 
 }
