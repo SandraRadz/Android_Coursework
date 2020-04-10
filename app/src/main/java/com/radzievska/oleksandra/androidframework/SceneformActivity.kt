@@ -19,6 +19,7 @@ import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
 import com.radzievska.oleksandra.androidframework.Analyzers.Analyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.ObjectSceneformAnalyzer
 import com.radzievska.oleksandra.androidframework.Analyzers.QRSceneformAnalyzer
+import com.radzievska.oleksandra.androidframework.Renderable.RenderableVideoLabel
 import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper
 import java.util.concurrent.TimeUnit
 
@@ -42,9 +43,6 @@ class SceneformActivity : AppCompatActivity() {
     //private var resource: Int = R.raw.andy
     private var resource: Int? = null
 
-//    private var callbackThread = HandlerThread("callback-worker")
-//    private lateinit var callbackHandler: Handler
-//
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,22 +60,8 @@ class SceneformActivity : AppCompatActivity() {
             CameraPermissionHelper.requestCameraPermission(this)
             return
         }
-
         arFragment.arSceneView.scene.addOnUpdateListener(this::onUpdateFrame)
-
-//
-//        callbackThread.start()
-//        callbackHandler = Handler(callbackThread.looper)
-//
-
-
-        arLabeler = ARLabeler(this@SceneformActivity, arFragment, model)
-
-//        detector = if(model != null){
-//            ObjectSceneformAnalyzer(this@SceneformActivity, arFragment, model, resource)
-//        } else{
-//            QRSceneformAnalyzer(this@SceneformActivity, arFragment, resource)
-//        }
+        arLabeler = ARLabeler(arFragment, RenderableVideoLabel(), null)
     }
 
 
@@ -99,39 +83,12 @@ class SceneformActivity : AppCompatActivity() {
             })
             t.start()
             lastAnalyzedTimestamp = currentTimestamp
-
         }
     }
-
-//    private fun runRendering(view: SurfaceView){
-//        if(view.width<=0 || view.height<=0){
-//            return
-//        }
-//        var bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-//        PixelCopy.request(view, bitmap, { copyResult ->
-//            if (copyResult == PixelCopy.SUCCESS) {
-//                arLabeler.runLabeling()
-//                //detector.runDetection(bitmap)
-//
-//            } else {
-//                Log.e(TAG, "Failed to copy ArFragment view.")
-//            }
-//        }, callbackHandler)
-//    }
 
     override fun onPause() {
         super.onPause()
         var intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-    }
-
-    override fun onStop() {
-        super.onStop()
-      //  callbackThread.interrupt()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-       // callbackThread.quitSafely()
     }
 }

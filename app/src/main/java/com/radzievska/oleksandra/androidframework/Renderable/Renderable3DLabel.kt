@@ -1,7 +1,6 @@
 package com.radzievska.oleksandra.androidframework.Renderable
 
 import android.app.AlertDialog
-import android.content.Context
 import android.util.Log
 import com.google.ar.core.Anchor
 import com.google.ar.sceneform.AnchorNode
@@ -9,13 +8,9 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
-import com.google.ar.sceneform.rendering.ViewRenderable
-import android.view.LayoutInflater
-import com.google.ar.sceneform.Node
-import com.radzievska.oleksandra.androidframework.R
 
 
-class Renderable3DLabel (private val context: Context, private val resource: Int) : RenderableLabel{
+class Renderable3DLabel (private val resource: Int) : RenderableLabel{
 
     override fun setTextToLabel(text: String) {
     }
@@ -28,7 +23,7 @@ class Renderable3DLabel (private val context: Context, private val resource: Int
     override fun addLabelToScene(arFragment: ArFragment, anchor: Anchor) {
         ModelRenderable
             .builder()
-            .setSource(context, resource)
+            .setSource(arFragment.context, resource)
             .build()
             .thenAccept {
                 it.isShadowCaster = true

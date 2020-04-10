@@ -1,6 +1,5 @@
 package com.radzievska.oleksandra.androidframework.Analyzers
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
@@ -8,29 +7,21 @@ import com.google.ar.sceneform.ux.ArFragment
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
-import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 import com.google.ar.core.Pose
 import com.google.ar.core.Session
 import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 import com.google.firebase.ml.vision.objects.FirebaseVisionObject
-import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 
 
 
-class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragment, private val model: FirebaseAutoMLLocalModel, resource: Int?=null) : Analyzer{
+class ObjectSceneformAnalyzer(private val arFragment: ArFragment, private val model: FirebaseAutoMLLocalModel, private val drawLabel: RenderableLabel) : Analyzer{
 
 
     val TAG = "ObjectScenefonmAnalyzer"
     var detectedBitmap: Bitmap? = null
     var session :Session? = null
-
-    var draw: RenderableLabel = if (resource != null ){
-        Renderable3DLabel(context, resource)
-    } else{
-        RenderableTextLabel(context)
-    }
 
 
     override fun runDetection(bitmap: Bitmap) {
@@ -92,18 +83,17 @@ class ObjectSceneformAnalyzer(context: Context, private val arFragment: ArFragme
             .addOnSuccessListener { labels ->
                 if (labels.size>0) {
                     val label = labels[0]
-                    Log.d("LABELS!!!!!!!!!!!!", labels.toString())
+                    Log.d("LABELS", labels.toString())
                     session = arFragment.arSceneView.session
 
                     val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(Pose.makeTranslation(0F, 0F, -0.8f))
 
-                   draw.setTextToLabel("${label.text}\n${label.confidence.times(100).toInt()}%")
+                    drawLabel.setTextToLabel("${label.text}\n${label.confidence.times(100).toInt()}%")
                     val anchor = session?.createAnchor(pos)
 
                     if (anchor != null) {
-                        draw.addLabelToScene(arFragment, anchor)
+                        drawLabel.addLabelToScene(arFragment, anchor)
                     }
-
                 }
             }
             .addOnFailureListener { e ->

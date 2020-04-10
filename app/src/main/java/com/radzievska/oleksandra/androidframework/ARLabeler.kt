@@ -15,24 +15,26 @@ import com.radzievska.oleksandra.androidframework.Analyzers.QRSceneformAnalyzer
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 
-class ARLabeler (context: Context, arFragment: ArFragment, model: String?) {
+class ARLabeler (arFragment: ArFragment, renderableLabel: RenderableLabel? = null, model: String? = null) {
 
-    private var label : RenderableLabel
     private var analyzer: Analyzer
     private val TAG = "ARLabeler"
 
+    private var label : RenderableLabel
     private var callbackThread = HandlerThread("callback-worker")
     private var callbackHandler: Handler
-
     init {
-        label = RenderableTextLabel(context)
+        label = RenderableTextLabel()
+        if (renderableLabel != null) {
+            label = renderableLabel
+        }
 
         analyzer = if (model!=null){
             val localModel = FirebaseAutoMLLocalModel.Builder()
                 .setAssetFilePath(model).build()
-            ObjectSceneformAnalyzer(context, arFragment, localModel, null)
+            ObjectSceneformAnalyzer(arFragment, localModel, label)
         } else{
-            QRSceneformAnalyzer(context, arFragment)
+            QRSceneformAnalyzer(arFragment, label)
         }
 
         callbackThread.start()
@@ -41,6 +43,7 @@ class ARLabeler (context: Context, arFragment: ArFragment, model: String?) {
 
     fun setLabel(renderable: RenderableLabel){
         this.label = renderable
+        // todo update label type in analyzer
     }
 
     fun runLabeling(view: SurfaceView){
