@@ -4,7 +4,6 @@
     android:layout_width="50dp"
     android:layout_height="wrap_content"
     android:textSize="7sp"
-    android:contentDescription="@string/image_view"
     android:text=""
     android:singleLine="false"
     android:background="@android:color/background_light"

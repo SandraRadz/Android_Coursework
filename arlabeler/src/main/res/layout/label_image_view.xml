@@ -2,6 +2,5 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/label_image_view"
     android:layout_width="60dp"
-    android:layout_height="90dp"
-    android:contentDescription="@string/image_view">
+    android:layout_height="90dp">
 </ImageView>

@@ -1,4 +1,4 @@
-package com.radzievska.oleksandra.androidframework
+package com.radzievska.oleksandra.arlabeler
 
 import android.app.ActivityManager
 import android.content.Context
@@ -11,18 +11,11 @@ import android.view.ViewGroup
 import com.google.ar.core.Config
 import com.google.ar.core.Session
 import com.google.ar.sceneform.ux.ArFragment
-import com.radzievska.oleksandra.androidframework.Tools.SnackbarHelper
+import com.radzievska.oleksandra.arlabeler.Tools.SnackbarHelper
 
 open class SceneformArFragment: ArFragment(){
     private val TAG = "SceneformArFragment"
-    private val PLANE_FINDING_MODE = Config.PlaneFindingMode.HORIZONTAL
-    private val UPDATE_MODE = Config.UpdateMode.LATEST_CAMERA_IMAGE
-    private val PLANERENDERER_ENABLED = true
-    private val PLANERENDERER_VISIBLE = true
-    private val PLANERENDERER_SHADOW_RECEIVER = true
     private val MIN_OPENGL_VERSION = 3.0
-
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,29 +56,5 @@ open class SceneformArFragment: ArFragment(){
 
         return config
     }
-
-//    override fun getSessionConfiguration(session: Session?): Config {
-//        Log.i(TAG, "setup new session")
-//        planeDiscoveryController.hide()
-//        planeDiscoveryController.setInstructionView(null)
-//
-//        val config = Config(session)
-//        config.planeFindingMode = PLANE_FINDING_MODE
-//        config.updateMode = UPDATE_MODE
-//        // config.focusMode = Config.FocusMode.AUTO
-//        session?.configure(config)
-//        this.arSceneView.setupSession(session)
-//        this.arSceneView.planeRenderer.isEnabled = PLANERENDERER_ENABLED
-//        this.arSceneView.planeRenderer.isVisible = PLANERENDERER_VISIBLE
-//        this.arSceneView.planeRenderer.isShadowReceiver = PLANERENDERER_SHADOW_RECEIVER
-//
-//        if (session != null) {
-//            activity.let { it as? SceneformActivity }
-//        }
-//        Log.i(TAG, config.toString())
-//        return config
-//    }
-
-
 
 }

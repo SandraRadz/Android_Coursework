@@ -1,26 +1,14 @@
 package com.radzievska.oleksandra.androidframework
 
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.util.Log
-import android.view.PixelCopy
-import android.view.SurfaceView
 import com.google.ar.sceneform.FrameTime
-import com.google.ar.sceneform.ux.ArFragment
-import android.media.Image
-import android.widget.ImageView
-import com.google.ar.core.Session
-import com.google.ar.sceneform.rendering.ViewRenderable
-import com.google.firebase.ml.vision.automl.FirebaseAutoMLLocalModel
 import com.radzievska.oleksandra.androidframework.Analyzers.Analyzer
-import com.radzievska.oleksandra.androidframework.Analyzers.ObjectSceneformAnalyzer
-import com.radzievska.oleksandra.androidframework.Analyzers.QRSceneformAnalyzer
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableVideoLabel
 import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper
+import com.radzievska.oleksandra.arlabeler.SceneformArFragment
 import java.util.concurrent.TimeUnit
 
 

@@ -1,37 +1,35 @@
 package com.radzievska.oleksandra.androidframework.Renderable
 
 import android.annotation.SuppressLint
-import com.google.ar.core.Anchor
-import com.google.ar.sceneform.ux.ArFragment
 import android.app.AlertDialog
-import android.net.Uri
 import android.util.Log
-import android.widget.MediaController
-import android.widget.VideoView
+import android.widget.TextView
+import com.google.ar.core.Anchor
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
-import com.radzievska.oleksandra.androidframework.R
+import com.radzievska.oleksandra.arlabeler.R
 
-
-class RenderableVideoLabel: RenderableLabel{
+class RenderableTextLabel: RenderableLabel {
 
     var text = "no text"
     var myNode: AnchorNode? = null
 
-    val TAG = "RenderableVideoLabel"
+    val TAG = "RenderableTextLabel"
+
 
     override fun addLabelToScene(arFragment: ArFragment, anchor: Anchor) {
         ViewRenderable
             .builder()
-            .setView(arFragment.context, R.layout.label_video_view)
+            .setView(arFragment.context, R.layout.label_text_view)
             .build()
             .thenAccept {
                 it.isShadowCaster = true
                 it.isShadowReceiver = true
                 addNodeToScene(arFragment, anchor, it)
-                Log.i(TAG, "Placing Video object")
+                Log.i(TAG, "Placing Text object")
             }
             .exceptionally {
                 val builder = AlertDialog.Builder(arFragment.context)
@@ -39,6 +37,10 @@ class RenderableVideoLabel: RenderableLabel{
                 builder.create().show()
                 return@exceptionally null
             }
+    }
+
+    override fun setTextToLabel(text: String){
+        this.text = text
     }
 
     @SuppressLint("ResourceType")
@@ -50,22 +52,13 @@ class RenderableVideoLabel: RenderableLabel{
         val node = TransformableNode(fragment.transformationSystem)
         node.renderable = renderable
         node.setParent(anchorNode)
-
         val r = renderable as ViewRenderable
         val v = r.view
-
-        val videoView = v.findViewById<VideoView>(R.id.label_video_view)
-        Log.d(TAG, text)
-        videoView.setVideoURI(Uri.parse(text))
-        videoView.setMediaController(MediaController(fragment.context))
-        videoView.start()
-
+        val textView = v.findViewById<TextView>(R.id.label_text_view)
+        textView.text = text
         myNode  = anchorNode
         fragment.arSceneView.scene.addChild(anchorNode)
     }
 
 
-    override fun setTextToLabel(text: String) {
-        this.text = text
-    }
 }
