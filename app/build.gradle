@@ -74,8 +74,10 @@ sceneform.asset('sampledata/android/andy.obj', // 'Source Asset Path' specified 
         'sampledata/models/andy.sfa',         // '.sfa Output Path' specified during import.
         'src/main/res/raw/andy')              // '.sfb Output Path' specified during import.
 
-sceneform.asset('sampledata/fox/model.obj',
-        'default',
-        'sampledata/fox/model.sfa',
-        'src/main/res/raw/fox')
 
+
+
+sceneform.asset('sampledata/flower/model.obj',
+        'default',
+        'sampledata/flower/model.sfa',
+        'src/main/res/raw/model')

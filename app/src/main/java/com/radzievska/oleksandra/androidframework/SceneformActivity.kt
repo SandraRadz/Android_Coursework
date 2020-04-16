@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import com.google.ar.sceneform.FrameTime
 import com.radzievska.oleksandra.androidframework.Analyzers.Analyzer
+import com.radzievska.oleksandra.androidframework.Renderable.Renderable3DLabel
+import com.radzievska.oleksandra.androidframework.Renderable.RenderableTextLabel
 import com.radzievska.oleksandra.androidframework.Renderable.RenderableVideoLabel
 import com.radzievska.oleksandra.androidframework.Tools.CameraPermissionHelper
 import com.radzievska.oleksandra.arlabeler.SceneformArFragment
@@ -29,7 +31,9 @@ class SceneformActivity : AppCompatActivity() {
     val model = "birds/manifest.json"
 
     //private var resource: Int = R.raw.andy
-    private var resource: Int? = null
+
+    // Alex “SAFFY” Safayan
+    private var resource: Int = R.raw.model
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +53,7 @@ class SceneformActivity : AppCompatActivity() {
             return
         }
         arFragment.arSceneView.scene.addOnUpdateListener(this::onUpdateFrame)
-        arLabeler = ARLabeler(arFragment, RenderableVideoLabel(), null)
+        arLabeler = ARLabeler(arFragment, RenderableTextLabel(), model)
     }
 
 
@@ -79,4 +83,5 @@ class SceneformActivity : AppCompatActivity() {
         var intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
 }

@@ -11,6 +11,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/reload"-->
+<!--            android:onClick="reloadArLabeler"-->
+<!--            />-->
+
         <fragment
             android:name="com.radzievska.oleksandra.arlabeler.SceneformArFragment"
             android:id="@+id/sceneform_fragment"

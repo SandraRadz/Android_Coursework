@@ -16,6 +16,7 @@ class QRSceneformAnalyzer(private val arFragment: ArFragment, private val drawLa
 
     val TAG = "QRSceneformAnalyzer"
     var session : Session? = null
+    var detected: Boolean = false
 
 
     override fun runDetection(bitmap: Bitmap) {
@@ -25,34 +26,38 @@ class QRSceneformAnalyzer(private val arFragment: ArFragment, private val drawLa
                 FirebaseVisionBarcode.FORMAT_AZTEC)
             .build()
 
-        val image = FirebaseVisionImage.fromBitmap(bitmap)
-        val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
-        detector.detectInImage(image)
-            .addOnSuccessListener { barcodes ->
-                Log.d("DETECTED QR", barcodes.toString())
+        if (!detected){
+            val image = FirebaseVisionImage.fromBitmap(bitmap)
+            val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
+            detector.detectInImage(image)
+                .addOnSuccessListener { barcodes ->
+                    Log.d("DETECTED QR", barcodes.toString())
 
-                if (barcodes.size>0){
-                    session = arFragment.arSceneView.session
-                    val item = barcodes[0]
-                    val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(
-                        Pose.makeTranslation(0F, 0F, -0.8f))
-                    item.rawValue?.let { drawLabel.setTextToLabel("$it\nQR") }
+                    if (barcodes.size>0){
+                        session = arFragment.arSceneView.session
+                        val item = barcodes[0]
+                        val pos = arFragment.arSceneView.arFrame?.camera?.displayOrientedPose?.compose(
+                            Pose.makeTranslation(0F, 0F, -0.8f))
+                        item.rawValue?.let { drawLabel.setTextToLabel("$it\nQR") }
 
-                    val valueType = item.valueType
-                    if (valueType == FirebaseVisionBarcode.TYPE_URL){
-                        item.url?.url?.let { drawLabel.setTextToLabel(it) }
-                    }
+                        val valueType = item.valueType
+                        if (valueType == FirebaseVisionBarcode.TYPE_URL){
+                            item.url?.url?.let { drawLabel.setTextToLabel(it) }
+                        }
 
-                    val anchor = session?.createAnchor(pos)
+                        val anchor = session?.createAnchor(pos)
 
-                    if (anchor != null) {
-                        drawLabel.addLabelToScene(arFragment, anchor)
+                        if (anchor != null) {
+                            detected = true
+                            drawLabel.addLabelToScene(arFragment, anchor)
+                        }
                     }
                 }
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "ERROR!")
-            }
+                .addOnFailureListener {
+                    Log.d(TAG, "ERROR!")
+                }
+        }
+
     }
 
 }
